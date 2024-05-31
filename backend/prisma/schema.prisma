@@ -19,7 +19,7 @@ model Usuario {
   nome     String
   email    String
   telefone String
-  usuario  String
+  usuario  String @unique
   senha    String
 
   @@map("usuario")
