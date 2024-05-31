@@ -3,7 +3,7 @@ import { PrismaService } from 'src/database/PrismaService';
 import { usuarioDTO } from '../dto/usuario';
 
 @Injectable()
-export class ModulesService {
+export class UsuarioService {
 
   constructor(private prisma: PrismaService) { }
 
@@ -22,5 +22,17 @@ export class ModulesService {
     })
 
     return usuario
+  }
+
+  async find(usuario: string) {
+    const usuarioExiste = await this.prisma.usuario.findUnique({
+      where: {
+        usuario: usuario
+      }
+    })
+
+    if (!usuarioExiste) throw new Error("Não existe este usuário")
+
+    return usuarioExiste
   }
 }
