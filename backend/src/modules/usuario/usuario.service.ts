@@ -1,38 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/PrismaService';
-import { usuarioDTO } from '../dto/usuario';
+// import { Injectable } from '@nestjs/common';
+// import { PrismaService } from 'src/database/PrismaService';
+// import { usuarioDTO } from '../dto/usuario';
 
-@Injectable()
-export class UsuarioService {
+// @Injectable()
+// export class UsuarioService {
 
-  constructor(private prisma: PrismaService) { }
+//   constructor(private prisma: PrismaService) { }
 
-  async create(data: usuarioDTO) {
-    const usuarioExists = this.prisma.usuario.findFirst({
-      where: {
-        usuario: data.usuario
-      }
-    })
+//   async create(data: usuarioDTO) {
+//     const usuarioExists = this.prisma.usuario.findFirst({
+//       where: {
+//         usuario: data.usuario
+//       }
+//     })
 
-    if (!usuarioExists) {
-      throw new Error("Usuário já existe")
-    }
-    const usuario = this.prisma.usuario.create({
-      data
-    })
+//     if (!usuarioExists) {
+//       throw new Error("Usuário já existe")
+//     }
+//     const usuario = this.prisma.usuario.create({
+//       data
+//     })
 
-    return usuario
-  }
+//     return usuario
+//   }
 
-  async find(usuario: string) {
-    const usuarioExiste = await this.prisma.usuario.findUnique({
-      where: {
-        usuario: usuario
-      }
-    })
+//   async find(usuario: string) {
+//     const usuarioExiste = await this.prisma.usuario.findUnique({
+//       where: {
+//         usuario: usuario
+//       }
+//     })
 
-    if (!usuarioExiste) throw new Error("Não existe este usuário")
+//     if (!usuarioExiste) throw new Error("Não existe este usuário")
 
-    return usuarioExiste
-  }
-}
+//     return usuarioExiste
+//   }
+// }
