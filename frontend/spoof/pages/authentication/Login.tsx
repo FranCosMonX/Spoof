@@ -20,20 +20,23 @@ export default function SignIn() {
     senha: '',
   });
   const router = useRouter();
+  const url = process.env.NEXT_PUBLIC_API_URL;
   const { enqueueSnackbar } = useSnackbar();
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
     // Enviando uma requisição POST para o backend
-    fetch('/api/submit', {
+    fetch(url + '/auth/signin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
+      credentials: 'include'
     })
       .then((response) => {
+        console.log(response)
         if (response.ok) {
           enqueueSnackbar('Login realizado com sucesso!', { variant: 'success' });
           router.push('/');

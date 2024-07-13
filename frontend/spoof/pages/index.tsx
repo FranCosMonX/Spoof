@@ -14,8 +14,9 @@ import getLPTheme from './getLPTheme';
 
 export default function LandingPage() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [logged, setLogged] = React.useState(false); // Adicione um estado para `logged`
+  const [logged, setLogged] = React.useState(false);
   const open = Boolean(anchorEl);
+  const url = process.env.NEXT_PUBLIC_API_URL;
   
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -33,6 +34,25 @@ export default function LandingPage() {
   };
 
   const router = useRouter();
+
+  const logout = () => {
+    setAnchorEl(null);
+
+    const isCookieSet = document.cookie.split(';').some((item) => item.trim().startsWith('token'))
+
+    if(isCookieSet){
+      setLogged(false);
+      //Deleta o cookie
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    }
+  }
+
+  React.useEffect(() => {
+    const isCookieSet = document.cookie.split(';').some((item) => item.trim().startsWith('token'))
+  
+    if(isCookieSet) setLogged(true);
+
+  }, [])
 
   return (
     <React.Fragment>
@@ -112,7 +132,7 @@ export default function LandingPage() {
               </ListItemIcon>
               Meu Perfil
             </MenuItem>
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={logout}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>

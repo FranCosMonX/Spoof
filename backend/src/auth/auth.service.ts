@@ -90,7 +90,10 @@ export class AuthService {
             throw new ForbiddenException();
         }
         
-        res.cookie('token', token);
+        res.cookie('token', token, {
+            secure: true,
+            sameSite: 'none'
+        });
 
         return res.send({ message: 'Login bem-sucedido' });
     }

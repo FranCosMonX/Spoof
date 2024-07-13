@@ -25,6 +25,7 @@ export default function CadastroUsuario() {
     senhaAux: '',
   });
   const router = useRouter();
+  const url = process.env.NEXT_PUBLIC_API_URL;
   const { enqueueSnackbar } = useSnackbar();
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,7 +37,7 @@ export default function CadastroUsuario() {
     }
   
     // Enviando uma requisição POST para o backend
-    fetch('/api/submit', {
+    fetch(url + '/auth/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ export default function CadastroUsuario() {
       .then((response) => {
         if (response.ok) {
           enqueueSnackbar('Cadastro realizado com sucesso!', { variant: 'success' });
-          router.push('login');
+          router.push('Login');
         } else if (response.status === 400) {
           response.json().then(data => {
             enqueueSnackbar(`Erro: ${data.detail}`, { variant: 'error' });
