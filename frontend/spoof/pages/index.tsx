@@ -3,13 +3,6 @@ import { Avatar, Box, Button, Grid, IconButton, Menu, MenuItem, Tooltip, ListIte
 import { Settings, Logout } from '@mui/icons-material';
 import { useRouter } from "next/router";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
-import Highlights from './Components/Highlights';
-import Pricing from './Components/Pricing';
-import Features from './Components/Features';
-import Testimonials from './Components/Testimonials';
-import FAQ from './Components/FAQ';
-import Footer from './Components/Footer';
 
 export default function LandingPage() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
