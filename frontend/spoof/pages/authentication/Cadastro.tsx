@@ -129,17 +129,15 @@ export default function CadastroUsuario() {
                   value={formData.telefone}
                   onChange={handleChange}
                 >
-                  {() => (
-                    <TextField
-                      required
-                      fullWidth
-                      id="telefone"
-                      label="Telefone"
-                      name="telefone"
-                      autoComplete="tel"
-                      type="tel"
-                    />
-                  )}
+                  <TextField
+                    required
+                    fullWidth
+                    id="telefone"
+                    label="Telefone"
+                    name="telefone"
+                    autoComplete="tel"
+                    type="tel"
+                  />
                 </InputMask>
               </Grid>
               <Grid item xs={12}>

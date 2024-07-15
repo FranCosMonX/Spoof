@@ -4,13 +4,12 @@ import { Settings, Logout } from '@mui/icons-material';
 import { useRouter } from "next/router";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
-import Highlights from './components/Highlights';
-import Pricing from './components/Pricing';
-import Features from './components/Features';
-import Testimonials from './components/Testimonials';
-import FAQ from './components/FAQ';
-import Footer from './components/Footer';
-import getLPTheme from './getLPTheme';
+import Highlights from './Components/Highlights';
+import Pricing from './Components/Pricing';
+import Features from './Components/Features';
+import Testimonials from './Components/Testimonials';
+import FAQ from './Components/FAQ';
+import Footer from './Components/Footer';
 
 export default function LandingPage() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
