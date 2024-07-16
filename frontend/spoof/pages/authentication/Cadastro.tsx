@@ -1,17 +1,17 @@
-import * as React from 'react';
-import { useState } from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import InputMask from 'react-input-mask';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
+import * as React from 'react';
+import { useState } from 'react';
+import InputMask from 'react-input-mask';
 
 const defaultTheme = createTheme();
 
@@ -27,17 +27,17 @@ export default function CadastroUsuario() {
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_API_URL;
   const { enqueueSnackbar } = useSnackbar();
-  
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (formData.senha !== formData.senhaAux) {
       enqueueSnackbar('Senhas não coincidem.', { variant: 'error' });
       return;
     }
-  
+
     // Enviando uma requisição POST para o backend
-    fetch(url + '/auth/signup', {
+    await fetch(url + '/auth/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,9 +59,9 @@ export default function CadastroUsuario() {
       .catch((error) => {
         console.error('Erro ao enviar requisição:', error);
         enqueueSnackbar('Ocorreu um erro ao enviar a requisição.', { variant: 'error' });
-      });       
+      });
   };
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({

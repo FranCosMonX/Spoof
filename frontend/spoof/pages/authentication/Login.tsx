@@ -1,16 +1,16 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import { useSnackbar } from 'notistack';
+import * as React from 'react';
+import { useState } from 'react';
 
 const defaultTheme = createTheme();
 
@@ -22,12 +22,12 @@ export default function SignIn() {
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_API_URL;
   const { enqueueSnackbar } = useSnackbar();
-  
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     // Enviando uma requisição POST para o backend
-    fetch(url + '/auth/signin', {
+    await fetch(url + '/auth/signin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ export default function SignIn() {
       .catch((error) => {
         console.error('Erro ao enviar requisição:', error);
         enqueueSnackbar('Ocorreu um erro ao enviar a requisição.', { variant: 'error' });
-      });       
+      });
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

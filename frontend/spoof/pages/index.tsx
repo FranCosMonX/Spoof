@@ -1,26 +1,20 @@
-import * as React from 'react';
-import { Avatar, Box, Button, Grid, IconButton, Menu, MenuItem, Tooltip, ListItemIcon, ToggleButtonGroup, ToggleButton, PaletteMode } from '@mui/material';
-import { Settings, Logout } from '@mui/icons-material';
-import { useRouter } from "next/router";
+import { Logout, Settings } from '@mui/icons-material';
+import { Avatar, Box, Button, Grid, IconButton, ListItemIcon, Menu, MenuItem, PaletteMode, Tooltip } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
-import Highlights from './Components/Highlights';
-import Pricing from './Components/Pricing';
+import { useRouter } from "next/router";
+import * as React from 'react';
 import Features from './Components/Features';
-import Testimonials from './Components/Testimonials';
-import FAQ from './Components/FAQ';
-import Footer from './Components/Footer';
 
 export default function LandingPage() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [logged, setLogged] = React.useState(false);
   const open = Boolean(anchorEl);
   const url = process.env.NEXT_PUBLIC_API_URL;
-  
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -39,7 +33,7 @@ export default function LandingPage() {
 
     const isCookieSet = document.cookie.split(';').some((item) => item.trim().startsWith('token'))
 
-    if(isCookieSet){
+    if (isCookieSet) {
       setLogged(false);
       //Deleta o cookie
       document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
@@ -48,8 +42,8 @@ export default function LandingPage() {
 
   React.useEffect(() => {
     const isCookieSet = document.cookie.split(';').some((item) => item.trim().startsWith('token'))
-  
-    if(isCookieSet) setLogged(true);
+
+    if (isCookieSet) setLogged(true);
 
   }, [])
 
