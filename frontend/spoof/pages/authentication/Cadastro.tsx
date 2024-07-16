@@ -169,19 +169,21 @@ export default function CadastroUsuario() {
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Cadastrar
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="Login" variant="body2">
-                  Já possui uma conta? Faça o login.
-                </Link>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Cadastrar
+              </Button>
+              <Grid container justifyContent="flex-end">
+                <Grid item>
+                  <Link href="Login" variant="body2">
+                    Já possui uma conta? Faça o login.
+                  </Link>
+                </Grid>
               </Grid>
             </Grid>
           </Box>
