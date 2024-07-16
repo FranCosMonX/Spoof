@@ -10,10 +10,11 @@ $ pnpm i
 
 É de extrema importância que seja criado um arquivo `.env` na raiz do projeto e que seja copiado o código do arquivo `.env-example` para que o próximo passo possa vir a ser executado com êxito.
 
-Para concluir a configuração do projeto backend, use o comando a seguir
+Para concluir a configuração do projeto backend, use os comandos a seguir
 
 ```bash
-$ npx prisma generate
+npx prisma migrate
+npx prisma generate
 ```
 
 ## Executando a aplicação
