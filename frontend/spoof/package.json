@@ -49,6 +49,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-input-mask": "^3.0.5"
+    "@types/react-input-mask": "^3.0.5",
+    "eslint-config-next": "^14.2.5"
   }
 }

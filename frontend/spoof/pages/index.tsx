@@ -3,7 +3,7 @@ import { Avatar, Box, Button, Grid, IconButton, ListItemIcon, Menu, MenuItem, Pa
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useRouter } from "next/router";
 import * as React from 'react';
-import Features from './Components/Features';
+import Features from '../Components/Features';
 
 export default function LandingPage() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
