@@ -1,15 +1,15 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { Request, Response } from 'express';
 import { PrismaService } from 'prisma/prisma.service';
+import { jwtSecret } from '../utils/constants';
 import { AuthDto } from './dto/auth.dto';
 import { SigninDto } from './dto/signin.dto'; // Importando o novo DTO
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { jwtSecret } from '../utils/constants';
-import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService {
-    constructor(private prisma: PrismaService, private jwt: JwtService) {}
+    constructor(private prisma: PrismaService, private jwt: JwtService) { }
 
     async signup(dto: AuthDto) {
         console.log('DTO recebido:', dto);
@@ -59,7 +59,7 @@ export class AuthService {
         return { message: 'Cadastrado com sucesso!' };
     }
 
-    async signin(dto: SigninDto, req: Request, res: Response) {
+    async signin(dto: SigninDto) {
         const { email, usuario, telefone, senha } = dto;
 
         // Verificação para garantir que ao menos email, username ou telefone sejam fornecidos
@@ -70,8 +70,8 @@ export class AuthService {
         const user = email
             ? await this.prisma.usuario.findUnique({ where: { email } })
             : usuario
-            ? await this.prisma.usuario.findUnique({ where: { usuario } })
-            : await this.prisma.usuario.findUnique({ where: { telefone } });
+                ? await this.prisma.usuario.findUnique({ where: { usuario } })
+                : await this.prisma.usuario.findUnique({ where: { telefone } });
 
         if (!user) {
             throw new UnauthorizedException('Credenciais inválidas');
@@ -89,13 +89,10 @@ export class AuthService {
         if (!token) {
             throw new ForbiddenException();
         }
-        
-        res.cookie('token', token, {
-            secure: true,
-            sameSite: 'none'
-        });
 
-        return res.send({ message: 'Login bem-sucedido' });
+        return {
+            accesss_token: token
+        };
     }
 
     async signout(req: Request, res: Response) {
