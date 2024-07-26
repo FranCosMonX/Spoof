@@ -1,7 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Request, Response } from 'express';
 import { PrismaService } from 'prisma/prisma.service';
 import { jwtSecret } from '../utils/constants';
 import { AuthDto } from './dto/auth.dto';
@@ -11,6 +10,11 @@ import { SigninDto } from './dto/signin.dto'; // Importando o novo DTO
 export class AuthService {
     constructor(private prisma: PrismaService, private jwt: JwtService) { }
 
+    /**
+     * Fazer o processamento dos dados de cadastro e informar o resultado para o usuário
+     * @param dto Informações para cadastrar um usuário
+     * @returns 
+     */
     async signup(dto: AuthDto) {
         console.log('DTO recebido:', dto);
 
@@ -59,6 +63,11 @@ export class AuthService {
         return { message: 'Cadastrado com sucesso!' };
     }
 
+    /**
+     * Fazer o processamento dos dados de login e gerar o Token de acesso
+     * @param dto Informações de login do usuário
+     * @returns 
+     */
     async signin(dto: SigninDto) {
         const { email, usuario, telefone, senha } = dto;
 
@@ -91,13 +100,16 @@ export class AuthService {
         }
 
         return {
+            message: 'Login bem sucedido',
             accesss_token: token
         };
     }
 
-    async signout(req: Request, res: Response) {
-        res.clearCookie('token');
-        return res.send({ message: 'Logout bem-sucedido' });
+    async signout() {
+        // res.clearCookie('token');
+        // return res.send({ message: 'Logout bem-sucedido' });
+        //removendo token
+        return { message: 'Logout bem-sucedido' }
     }
 
     async hashPassword(password: string) {
