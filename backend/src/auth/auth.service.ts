@@ -101,7 +101,8 @@ export class AuthService {
 
         return {
             message: 'Login bem sucedido',
-            accesss_token: token
+            accesss_token: token,
+            user_id: user.id
         };
     }
 
