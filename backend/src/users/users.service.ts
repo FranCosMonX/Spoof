@@ -4,9 +4,10 @@ import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     async getMyUser(id: string, req: Request) {
+
         const user = await this.prisma.usuario.findUnique({ where: { id } });
 
         if (!user) {

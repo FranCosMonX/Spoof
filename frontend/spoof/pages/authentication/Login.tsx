@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { useState } from 'react';
+import axios from 'axios';
 
 const defaultTheme = createTheme();
 
@@ -25,34 +26,38 @@ export default function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Enviando uma requisição POST para o backend
-    await fetch(url + '/auth/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-      credentials: 'include'
-    })
-      .then((response) => {
-        console.log(response)
-        if (response.ok) {
+  
+    try {
+      const response = await axios.post(url + '/auth/signin', formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if ([200, 201].includes(response.status)) {
+        const token = response.data.accesss_token;
+        const user = response.data.user_id
+        if (token) {
+          sessionStorage.setItem('bearerToken', token);
+          sessionStorage.setItem('user', user);
           enqueueSnackbar('Login realizado com sucesso!', { variant: 'success' });
           router.push('/');
-        } else if (response.status === 400) {
-          response.json().then(data => {
-            enqueueSnackbar(`Erro: ${data.detail}`, { variant: 'error' });
-          });
         } else {
-          enqueueSnackbar('Ocorreu um erro ao logar.', { variant: 'error' });
+          enqueueSnackbar('Token não encontrado na resposta.', { variant: 'error' });
         }
-      })
-      .catch((error) => {
-        console.error('Erro ao enviar requisição:', error);
+      } else if ([400, 401].includes(response.status)) {
+        enqueueSnackbar(`Erro: ${response.data.message}`, { variant: 'error' });
+      } else {
+        enqueueSnackbar('Ocorreu um erro ao logar.', { variant: 'error' });
+      }
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        enqueueSnackbar(`Erro: ${error.response.data.message}`, { variant: 'error' });
+      } else {
         enqueueSnackbar('Ocorreu um erro ao enviar a requisição.', { variant: 'error' });
-      });
-  };
+      }
+    }
+  };  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
