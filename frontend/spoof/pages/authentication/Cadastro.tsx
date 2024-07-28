@@ -12,6 +12,7 @@ import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { useState } from 'react';
 import InputMask from 'react-input-mask';
+import axios from 'axios';
 
 const defaultTheme = createTheme();
 
@@ -30,36 +31,34 @@ export default function CadastroUsuario() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (formData.senha !== formData.senhaAux) {
       enqueueSnackbar('Senhas não coincidem.', { variant: 'error' });
       return;
     }
 
-    // Enviando uma requisição POST para o backend
-    await fetch(url + '/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (response.ok) {
-          enqueueSnackbar('Cadastro realizado com sucesso!', { variant: 'success' });
-          router.push('Login');
-        } else if (response.status === 400) {
-          response.json().then(data => {
-            enqueueSnackbar(`Erro: ${data.detail}`, { variant: 'error' });
-          });
-        } else {
-          enqueueSnackbar('Ocorreu um erro ao cadastrar.', { variant: 'error' });
+    try {
+      const response = await axios.post(url + '/auth/signup', formData, {
+        headers: {
+          'Content-Type': 'application/json'
         }
-      })
-      .catch((error) => {
-        console.error('Erro ao enviar requisição:', error);
-        enqueueSnackbar('Ocorreu um erro ao enviar a requisição.', { variant: 'error' });
       });
+  
+      if ([200, 201].includes(response.status)) {
+        enqueueSnackbar('Cadastro realizado com sucesso!', { variant: 'success' });
+        router.push('Login');
+      } else if ([400, 401].includes(response.status)) {
+        enqueueSnackbar(`Erro: ${response.data.message}`, { variant: 'error' });
+      } else {
+        enqueueSnackbar('Ocorreu um erro ao cadastrar.', { variant: 'error' });
+      }
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        enqueueSnackbar(`Erro: ${error.response.data.message}`, { variant: 'error' });
+      } else {
+        enqueueSnackbar('Ocorreu um erro ao enviar a requisição.', { variant: 'error' });
+      }
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
