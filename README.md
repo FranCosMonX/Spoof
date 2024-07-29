@@ -6,21 +6,26 @@ Essa aplicação foi desenvolvida como Prova de Conceito para utilizar os servi�
 
 ## Estrutura
 
-A aplicação possui as seguintes funcionalidades:
+  A aplicação possui as seguintes funcionalidades:
 
-<div style="text-align: center;">
-    <img src="./src/img/UC%20Diagram.svg" alt="Imagem contendo um diagrama de casos de uso com as funcionalidades implementadas na aplicação">
-</div>
+  <div style="display: flex; justify-content: center;">
+      <img src="./src/img/UC%20Diagram.svg" alt="Imagem contendo um diagrama de casos de uso com as funcionalidades implementadas na aplicação">
+  </div>
 
   1. **Cadastro de usuário**: Para acessar a plataforma, o usuário deve ter um cadastro devidamente confirmado.
+
       > Não precisa fazer confirmação real de email e telefone, mas deve informar a sintaxe correta nos campos.
+
   2. **Login e Logout**: Fazer uso das credenciais criadas no momento do cadastro da conta para fazer o Login - entrar na aplicação, e logout - sair da aplicação.
   3. **Gerenciar Post**: Fazer o gerenciamento das informações de usuário, exceto o nome completo informado no momento do cadastro. Isso possibilita que o usuário veja suas informações e edite-as.
   4. **Cadastrar Post**: Permite que o usuário possa fazer o cadastro de posts adicionando algumas informações a ele, além de apenas um objeto multimídia.
   5. **Gerenciamento de Post**: Permite que o usuário possa excluir ou editar informações textuais dos posts já criados, além de os visualizar.
+
       > Só é permitido fazer estas operações com os próprios Posts.
+
   6. **Processamento de Objetos**: Permite que o usuário possa fazer algumas mudanças em um objeto multimídia e o guarde com as alterações definidas.
   7. **Pesquisar por post(s)**: Permite que o usuário possa pesquisar por posts usando elementos textuais ou filtros de pesquisa.
+
       > Só é permitido fazer estas operações com os próprios Posts.
 
 <!-- Falar sobre a arquitetura da aws usada -->
