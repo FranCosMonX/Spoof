@@ -1,0 +1,23 @@
+@startuml
+
+left to right direction
+
+actor usuario
+
+usuario --> (Cadastrar usuario)
+usuario --> (Log  in/Logout)
+usuario --> (Gerenciar Perfil)
+usuario --> (Cadastrar Post)
+usuario --> (Gerenciar Post)
+usuario --> (Processamento de Objetos)
+usuario --> (Buscar Post)
+(Buscar Post) --> (Filtro)
+
+(Cadastrar usuario) .> (Login/Logout)
+(Login/Logout) .> (Gerenciar Perfil)
+(Login/Logout) .> (Processamento de Objetos)
+(Login/Logout) .> (Cadastrar Post)
+(Login/Logout) .> (Gerenciar Post)
+(Cadastrar Post) .> (Processamento de Objetos)
+
+@enduml
