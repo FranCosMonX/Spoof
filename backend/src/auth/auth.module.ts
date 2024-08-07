@@ -17,6 +17,7 @@ import { AuthService } from './auth.service';
   providers: [AuthService, {
     provide: APP_GUARD,
     useClass: AuthGuard,
-  }]
+  }],
+  exports: [AuthService]
 })
 export class AuthModule { }

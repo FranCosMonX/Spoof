@@ -76,12 +76,13 @@ export class AuthService {
             throw new BadRequestException('Email, username ou telefone devem ser fornecidos');
         }
 
-        const user = email
+        const user = 'email' in dto
             ? await this.prisma.usuario.findUnique({ where: { email } })
-            : usuario
+            : 'usuario' in dto
                 ? await this.prisma.usuario.findUnique({ where: { usuario } })
                 : await this.prisma.usuario.findUnique({ where: { telefone } });
 
+        console.log(dto)
         if (!user) {
             throw new UnauthorizedException('Credenciais inválidas');
         }
