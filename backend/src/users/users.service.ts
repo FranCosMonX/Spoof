@@ -69,11 +69,23 @@ export class UsersService {
         } else if ('senha' in data || 'email' in data) {
             const userData = data as SensitiveInformationDTO;
 
-            const hashedPassword = await this.authService.hashPassword(userData.senha);
+            if ('senha' in data) {
+                const hashedPassword = await this.authService.hashPassword(userData.senha);
+                await this.prisma.usuario.update({
+                    where: { id },
+                    data: { senha: hashedPassword }
+                })
+            }
 
-            const result = await this.prisma.usuario.update({
-                where: { id },
-                data: { senha: hashedPassword, email: userData.email, updatedAt: new Date() }
+            if ('email' in data) {
+                await this.prisma.usuario.update({
+                    where: { id },
+                    data: { email: userData.email, updatedAt: new Date() }
+                })
+            }
+
+            const result = await this.prisma.usuario.findFirst({
+                where: { id }
             })
 
             return {
