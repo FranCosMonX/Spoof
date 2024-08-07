@@ -1,5 +1,6 @@
 import { Logout, Settings } from '@mui/icons-material';
 import { Avatar, Box, Button, Grid, IconButton, ListItemIcon, Menu, MenuItem, Link, Tooltip } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import { useRouter } from "next/router";
 import * as React from 'react';
 import { useSnackbar } from 'notistack';
@@ -51,18 +52,24 @@ export default function UserMenu() {
         <Grid item>
           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
             {logged ? (
-              <Tooltip title="Account settings">
-                <IconButton
-                  onClick={handleClick}
-                  size="small"
-                  sx={{ ml: 2 }}
-                  aria-controls={open ? 'account-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                >
-                  <Avatar sx={{ width: 32, height: 32 }} />
-                </IconButton>
-              </Tooltip>
+              <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                <Button variant="contained" startIcon={ <Add /> }>
+                  Novo Post
+                </Button>
+
+                <Tooltip title="Account settings">
+                  <IconButton
+                    onClick={handleClick}
+                    size="small"
+                    sx={{ ml: 2 }}
+                    aria-controls={open ? 'account-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                  >
+                    <Avatar sx={{ width: 32, height: 32 }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             ) : (
               <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                 <Button variant="contained" href="/authentication/Login" sx={{ marginRight: 2 }}>
