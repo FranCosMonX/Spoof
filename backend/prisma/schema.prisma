@@ -21,9 +21,11 @@ model Usuario {
   email     String    @unique
   telefone  String    @unique
   senha     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  posts     Objects[]
+  profilePicture String?   // Novo campo para foto de perfil
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  posts          Objects[]
+  files          File[]    // Relação com o modelo File
 }
 
 model Objects {
@@ -37,4 +39,12 @@ model Objects {
   updatedAt   DateTime @updatedAt
 
   Usuario Usuario[]
+}
+
+model File {
+  id        String   @id @unique @default(uuid())
+  url       String
+  userId    String
+  user      Usuario  @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
