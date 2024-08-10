@@ -1,13 +1,13 @@
-import { Controller, HttpCode, HttpStatus, Param, Post, Delete, UploadedFile, UseInterceptors, BadRequestException, Get, Req } from '@nestjs/common';
+import { BadRequestException, Controller, Delete, HttpCode, HttpStatus, Param, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Public } from 'src/routes/routes.decorator';
-import { FileService } from './file.service';
 import { diskStorage } from 'multer';
 import { extname as getExtname } from 'path';
+import { FileService } from 'src/file/file.service';
+import { Public } from 'src/routes/routes.decorator';
 
-@Controller('file')
-export class FileController {
-  constructor(private filesService: FileService) {}
+@Controller('posts')
+export class PostsController {
+  constructor(private filesService: FileService) { }
 
   @Public()
   @HttpCode(HttpStatus.OK)
