@@ -53,7 +53,7 @@ export default function UserMenu() {
           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
             {logged ? (
               <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-                <Button variant="contained" startIcon={ <Add /> }>
+                <Button variant="contained" startIcon={ <Add /> } href="/posts/new">
                   Novo Post
                 </Button>
 
