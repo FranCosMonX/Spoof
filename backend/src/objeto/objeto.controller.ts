@@ -1,16 +1,16 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Patch, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname as getExtname } from 'path';
-import { ObjetoService } from './objeto.service';
-import { Public } from 'src/routes/routes.decorator';
+import { Response } from 'express';
 import { memoryStorage } from 'multer';
+import { extname as getExtname } from 'path';
+import { Public } from 'src/routes/routes.decorator';
+import { ObjetoService } from './objeto.service';
 
 @Controller('objeto')
 export class ObjetoController {
   constructor(private objetoService: ObjetoService) { }
 
-  @Public()
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @Post(':userId/upload')
   @UseInterceptors(FileInterceptor('file', {
     storage: memoryStorage(), // Altere para memoryStorage
@@ -33,7 +33,10 @@ export class ObjetoController {
       cb(new BadRequestException('Tipo de arquivo não suportado.'), false);
     },
   }))
-  async uploadFile(@UploadedFile() file: Express.Multer.File, @Param('userId') userId: string, @Req() req) {
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('userId') userId: string,
+    @Req() req) {
     if (!file) {
       throw new BadRequestException('Nenhum arquivo enviado.');
     }
@@ -41,40 +44,43 @@ export class ObjetoController {
     const { description, tags } = req.body;
     const result = await this.objetoService.uploadFile(file, userId, description, tags ? tags.split(',') : []);
     return {
-      statusCode: HttpStatus.OK,
       message: 'Arquivo enviado com sucesso',
       data: result,
     };
   }
 
-  @Public()
+  @HttpCode(HttpStatus.OK)
   @Delete(':userId/:fileId')
-  async deleteFile(@Param('userId') userId: string, @Param('fileId') fileId: string) {
+  async deleteFile(
+    @Param('userId') userId: string,
+    @Param('fileId') fileId: string
+  ) {
     // Verifica se o arquivo pode ser excluído
     const deletedFile = await this.objetoService.deleteFileById(userId, fileId);
     return {
-      statusCode: HttpStatus.OK,
       message: 'Arquivo excluído com sucesso',
       data: deletedFile,
     };
   }
-  
-  @Public()
+
+  @HttpCode(HttpStatus.OK)
   @Get(':userId/search')
-  async searchObjetos(@Param('userId') userId: string, @Query('keyword') keyword: string) {
+  async searchObjetos(
+    @Param('userId') userId: string,
+    @Query('keyword') keyword: string
+  ) {
     if (!keyword) {
       throw new BadRequestException('Keyword é obrigatória');
     }
 
     const results = await this.objetoService.searchObjetos(userId, keyword);
     return {
-      statusCode: HttpStatus.OK,
       message: 'Resultados da pesquisa',
       data: results,
     };
   }
 
-  @Public()
+  @HttpCode(HttpStatus.OK)
   @Get(':userId/list')
   async listAllFiles(@Param('userId') userId: string) {
     const files = await this.objetoService.listAllFiles(userId);
@@ -93,20 +99,34 @@ export class ObjetoController {
   ) {
     const updatedObjeto = await this.objetoService.updateObjeto(userId, fileId, updateData);
     return {
-      statusCode: HttpStatus.OK,
       message: 'Objeto atualizado com sucesso',
       data: updatedObjeto,
     };
   }
 
+  @HttpCode(HttpStatus.OK)
   @Public()
   @Get(':userId/:fileId/detalhes')
-  async getObjetoDetails(@Param('userId') userId: string, @Param('fileId') fileId: string) {
+  async getObjetoDetails(
+    @Param('userId') userId: string,
+    @Param('fileId') fileId: string
+  ) {
     const objetoDetails = await this.objetoService.getObjetoDetails(userId, fileId);
     return {
-      statusCode: HttpStatus.OK,
       message: 'Detalhes do objeto',
       data: objetoDetails,
     };
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Get(':fileId/upload')
+  async getFile(
+    @Param('fileId') fileId: string,
+    @Res() res: Response
+  ) {
+    const result = await this.objetoService.getFile(fileId)
+    res.set('Content-type', result.mime)
+    return res.send(result.fileBuffer)
   }
 }

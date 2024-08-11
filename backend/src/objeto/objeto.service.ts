@@ -1,7 +1,7 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 import { extname } from 'path';
+import { PrismaService } from 'prisma/prisma.service';
 
 // Configuração do AWS S3
 const s3 = new S3({
@@ -12,7 +12,7 @@ const s3 = new S3({
 
 @Injectable()
 export class ObjetoService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async uploadFile(file: Express.Multer.File, userId: string, description?: string, tags?: string[]) {
     if (!file || !file.buffer) {
@@ -132,5 +132,36 @@ export class ObjetoService {
     }
 
     return objeto;
+  }
+
+  async getFile(objectId: string) {
+    const result = await this.prisma.objeto.findFirst({
+      where: { id: objectId },
+      select: { url: true, }
+    })
+
+    if (!result) throw new BadRequestException("Arquivo não encontrado")
+
+    const getObjectParams = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: result.url,
+    };
+
+    try {
+      const objectData = await s3.getObject(getObjectParams).promise();
+      console.log('Object Data coletado:', objectData); // Adicionado para depuração
+
+      if (objectData.Body) {
+        return {
+          fileBuffer: objectData.Body as Buffer,
+          mime: objectData.ContentType as string
+        }
+      } else {
+        throw new BadRequestException('O arquivo no S3 está vazio ou não pode ser acessado');
+      }
+    } catch (error) {
+      console.error('Erro ao acessar o S3:', error);
+      throw new BadRequestException('Erro ao acessar o S3');
+    }
   }
 }
