@@ -1,21 +1,48 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { unlink } from 'fs';
-import { promisify } from 'util';
+import { S3 } from 'aws-sdk';
+import { extname } from 'path';
 
-const unlinkAsync = promisify(unlink);
+// Configuração do AWS S3
+const s3 = new S3({
+  region: process.env.AWS_REGION,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
 
 @Injectable()
 export class ObjetoService {
   constructor(private prisma: PrismaService) {}
 
   async uploadFile(file: Express.Multer.File, userId: string, description?: string, tags?: string[]) {
-    const url = `uploads/${file.filename}`;
+    if (!file || !file.buffer) {
+      throw new BadRequestException('Nenhum arquivo válido encontrado.');
+    }
+
+    const fileExtension = extname(file.originalname).toLowerCase();
+    const fileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${fileExtension}`;
+    const fileKey = `uploads/${fileName}`;
+
+    console.log('Bucket:', process.env.AWS_S3_BUCKET_NAME); // Log para verificar a variável
+
+    try {
+      // Upload para o S3
+      await s3.upload({
+        Bucket: process.env.AWS_S3_BUCKET_NAME, // Atualizado para corresponder ao .env
+        Key: fileKey,
+        Body: file.buffer, // Certifique-se de que file.buffer está presente
+        ContentType: file.mimetype,
+      }).promise();
+    } catch (error) {
+      console.error('Erro ao enviar arquivo para o S3:', error);
+      throw new BadRequestException('Erro ao enviar arquivo para o S3');
+    }
+
     return this.prisma.objeto.create({
       data: {
         name: file.originalname,
         description: description ?? '',
-        url,
+        url: fileKey, // URL é o chave do arquivo no S3
         tags: tags ?? [],
         userId,
       },
@@ -29,23 +56,28 @@ export class ObjetoService {
         userId,
       },
     });
-  
+
     if (!file) {
       throw new NotFoundException('Arquivo não encontrado ou não pertence ao usuário');
     }
-  
+
     try {
-      await unlinkAsync(file.url);
+      // Deletar do S3
+      await s3.deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET_NAME, // Atualizado para corresponder ao .env
+        Key: file.url,
+      }).promise();
     } catch (error) {
-      console.error('Erro ao excluir arquivo:', error);
-      throw new NotFoundException('Arquivo não encontrado no disco');
+      console.error('Erro ao excluir arquivo do S3:', error);
+      throw new NotFoundException('Arquivo não encontrado no S3');
     }
-  
+
     return this.prisma.objeto.delete({
       where: { id: fileId },
     });
   }
-  
+
+
   async searchObjetos(userId: string, keyword: string) {
     return this.prisma.objeto.findMany({
       where: {

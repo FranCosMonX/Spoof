@@ -1,9 +1,9 @@
 import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Patch, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { extname as getExtname } from 'path';
 import { ObjetoService } from './objeto.service';
 import { Public } from 'src/routes/routes.decorator';
+import { memoryStorage } from 'multer';
 
 @Controller('objeto')
 export class ObjetoController {
@@ -13,13 +13,7 @@ export class ObjetoController {
   @HttpCode(HttpStatus.OK)
   @Post(':userId/upload')
   @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, `${file.fieldname}-${uniqueSuffix}${getExtname(file.originalname)}`);
-      },
-    }),
+    storage: memoryStorage(), // Altere para memoryStorage
     fileFilter: (req, file, cb) => {
       const videoTypes = /mp4|mpg|avi|wmv|mov|webm/;
       const audioTypes = /mp3|wav|pcm|flac|ogg/;
@@ -41,7 +35,7 @@ export class ObjetoController {
   }))
   async uploadFile(@UploadedFile() file: Express.Multer.File, @Param('userId') userId: string, @Req() req) {
     if (!file) {
-      throw new BadRequestException('Nenhum arquivo upado.');
+      throw new BadRequestException('Nenhum arquivo enviado.');
     }
 
     const { description, tags } = req.body;

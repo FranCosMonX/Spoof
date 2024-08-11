@@ -3,15 +3,27 @@ import { Request } from 'express';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthService } from '../auth/auth.service';
 import { BasicInformationDTO, SensitiveInformationDTO } from './dto/UpdateUser.dto';
-import { unlink } from 'fs';
+import { S3 } from 'aws-sdk';
 import { promisify } from 'util';
+import { unlink } from 'fs';
 
 const unlinkAsync = promisify(unlink);
-const DEFAULT_PROFILE_PICTURE = 'uploads/profile-pictures/default-profile.png';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService, private authService: AuthService) {}
+  private readonly s3: S3;
+  private readonly DEFAULT_PROFILE_PICTURE = 'uploads/profile-pictures/default-profile.png';
+  private readonly BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME;
+
+  constructor(private prisma: PrismaService, private authService: AuthService) {
+    this.s3 = new S3({
+      region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
+    });
+  }
 
   async getMyUser(id: string, req: Request) {
     const user = await this.prisma.usuario.findUnique({ where: { id } });
@@ -103,16 +115,46 @@ export class UsersService {
     });
   }
 
-  async updateProfilePicture(userId: string, profilePicture: string) {
-    await this.prisma.usuario.update({
-      where: { id: userId },
-      data: { profilePicture },
-    });
+  async updateProfilePicture(userId: string, file: Express.Multer.File) {
+    const user = await this.prisma.usuario.findUnique({ where: { id: userId } });
 
-    return this.prisma.usuario.findUnique({
-      where: { id: userId },
-      select: { id: true, profilePicture: true },
-    });
+    if (!user) {
+      throw new NotFoundException("Usuário não encontrado.");
+    }
+
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const params = {
+      Bucket: this.BUCKET_NAME,
+      Key: `profile-pictures/${fileName}`,
+      Body: file.buffer, // Certifique-se de que o buffer está sendo usado aqui
+      ContentType: file.mimetype,
+    };
+
+    try {
+      const data = await this.s3.upload(params).promise();
+      const profilePictureUrl = data.Location;
+
+      await this.prisma.usuario.update({
+        where: { id: userId },
+        data: { profilePicture: profilePictureUrl },
+      });
+
+      if (user.profilePicture && user.profilePicture !== this.DEFAULT_PROFILE_PICTURE) {
+        const oldParams = {
+          Bucket: this.BUCKET_NAME,
+          Key: `profile-pictures/${user.profilePicture.split('/').pop()}`,
+        };
+        await this.s3.deleteObject(oldParams).promise();
+      }
+
+      return {
+        message: 'Foto de perfil atualizada com sucesso!',
+        profilePicture: profilePictureUrl,
+      };
+    } catch (error) {
+      console.error('Erro ao enviar foto de perfil para o S3:', error);
+      throw new BadRequestException('Erro ao atualizar a foto de perfil.');
+    }
   }
 
   async removePreviousProfilePicture(userId: string) {
@@ -127,30 +169,26 @@ export class UsersService {
 
     const previousProfilePicture = user.profilePicture;
 
-    if (!previousProfilePicture) {
-      await this.prisma.usuario.update({
-        where: { id: userId },
-        data: { profilePicture: DEFAULT_PROFILE_PICTURE },
-      });
-      return { message: 'Nenhuma foto de perfil para excluir. Foto padrão atribuída.' };
+    if (!previousProfilePicture || previousProfilePicture === this.DEFAULT_PROFILE_PICTURE) {
+      return { message: 'A foto de perfil já é a foto padrão ou não existe.' };
     }
 
-    if (previousProfilePicture === DEFAULT_PROFILE_PICTURE) {
-      return { message: 'A foto de perfil já é a foto padrão.' };
-    }
-
-    const filePath = previousProfilePicture;
+    const fileName = previousProfilePicture.split('/').pop();
+    const params = {
+      Bucket: this.BUCKET_NAME,
+      Key: `profile-pictures/${fileName}`,
+    };
 
     try {
-      await unlinkAsync(filePath);
+      await this.s3.deleteObject(params).promise();
       await this.prisma.usuario.update({
         where: { id: userId },
-        data: { profilePicture: DEFAULT_PROFILE_PICTURE },
+        data: { profilePicture: this.DEFAULT_PROFILE_PICTURE },
       });
-      return { message: 'Foto de perfil excluída com sucesso. Foto padrão atribuída.' };
+      return { message: 'Foto de perfil excluída com sucesso.' };
     } catch (error) {
-      console.error('Erro ao excluir o arquivo:', error);
-      throw new BadRequestException('Erro ao excluir o arquivo de foto de perfil.');
+      console.error('Erro ao remover foto de perfil do S3:', error);
+      throw new BadRequestException('Erro ao remover a foto de perfil.');
     }
   }
 }

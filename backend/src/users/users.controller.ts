@@ -3,7 +3,7 @@ import { Public } from 'src/routes/routes.decorator';
 import { BasicInformationDTO, SensitiveInformationDTO } from './dto/UpdateUser.dto';
 import { UsersService } from './users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import * as multer from 'multer';
 import { extname } from 'path';
 
 @Controller('users')
@@ -36,13 +36,7 @@ export class UsersController {
 
   @Post(':id/upload-profile-picture')
   @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads/profile-pictures',
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
-      },
-    }),
+    storage: multer.memoryStorage(),
     fileFilter: (req, file, cb) => {
       const allowedTypes = /jpeg|jpg|png|svg/;
       const fileExtname = extname(file.originalname).toLowerCase();
@@ -56,8 +50,7 @@ export class UsersController {
   }))
   async uploadProfilePicture(@UploadedFile() file: Express.Multer.File, @Param('id') userId: string) {
     await this.usersService.removePreviousProfilePicture(userId);
-    const profilePictureUrl = `uploads/profile-pictures/${file.filename}`;
-    const result = await this.usersService.updateProfilePicture(userId, profilePictureUrl);
+    const result = await this.usersService.updateProfilePicture(userId, file);
     return {
       statusCode: HttpStatus.OK,
       message: 'Profile picture uploaded successfully',
