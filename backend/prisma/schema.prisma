@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// USUARIO
+// Modelo Usuario
 model Usuario {
   id        String    @id @unique @default(uuid())
   nome      String
@@ -21,30 +15,21 @@ model Usuario {
   email     String    @unique
   telefone  String    @unique
   senha     String
-  profilePicture String?   // Novo campo para foto de perfil
+  profilePicture String?   
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  posts          Objects[]
-  files          File[]    // Relação com o modelo File
+  objetos        Objeto[] // Relação com o modelo Objeto
 }
 
-model Objects {
-  idObjects   String   @id @unique @default(uuid())
+// Modelo Objeto
+model Objeto {
+  id          String   @id @unique @default(uuid())
   name        String
   description String?
-  // Aqui vai ficar as possiveis configurações do objeto, como por exemplo, se ele é um botão, um input, um texto, etc.
-  config      Json?
-  endPoint    String
+  url         String
+  tags        String[]
+  userId      String
+  user        Usuario  @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  Usuario Usuario[]
-}
-
-model File {
-  id        String   @id @unique @default(uuid())
-  url       String
-  userId    String
-  user      Usuario  @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
 }

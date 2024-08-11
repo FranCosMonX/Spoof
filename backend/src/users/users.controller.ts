@@ -5,11 +5,10 @@ import { UsersService } from './users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { extname as getExtname } from 'path';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @HttpCode(HttpStatus.OK)
   @Get(':id')
@@ -46,7 +45,7 @@ export class UsersController {
     }),
     fileFilter: (req, file, cb) => {
       const allowedTypes = /jpeg|jpg|png|svg/;
-      const fileExtname = getExtname(file.originalname).toLowerCase();
+      const fileExtname = extname(file.originalname).toLowerCase();
       const extnameValid = allowedTypes.test(fileExtname);
       const mimetypeValid = allowedTypes.test(file.mimetype);
       if (mimetypeValid && extnameValid) {
@@ -58,7 +57,12 @@ export class UsersController {
   async uploadProfilePicture(@UploadedFile() file: Express.Multer.File, @Param('id') userId: string) {
     await this.usersService.removePreviousProfilePicture(userId);
     const profilePictureUrl = `uploads/profile-pictures/${file.filename}`;
-    return this.usersService.updateProfilePicture(userId, profilePictureUrl);
+    const result = await this.usersService.updateProfilePicture(userId, profilePictureUrl);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Profile picture uploaded successfully',
+      data: result,
+    };
   }
 
   @Delete(':id/remove-profile-picture')
