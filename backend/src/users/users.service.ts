@@ -1,11 +1,11 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { S3 } from 'aws-sdk';
 import { Request } from 'express';
+import { unlink } from 'fs';
 import { PrismaService } from 'prisma/prisma.service';
+import { promisify } from 'util';
 import { AuthService } from '../auth/auth.service';
 import { BasicInformationDTO, SensitiveInformationDTO } from './dto/UpdateUser.dto';
-import { S3 } from 'aws-sdk';
-import { promisify } from 'util';
-import { unlink } from 'fs';
 
 const unlinkAsync = promisify(unlink);
 
@@ -152,7 +152,7 @@ export class UsersService {
         profilePicture: profilePictureUrl,
       };
     } catch (error) {
-      console.error('Erro ao enviar foto de perfil para o S3:', error);
+      //console.error('Erro ao enviar foto de perfil para o S3:', error);
       throw new BadRequestException('Erro ao atualizar a foto de perfil.');
     }
   }
@@ -187,7 +187,7 @@ export class UsersService {
       });
       return { message: 'Foto de perfil excluída com sucesso.' };
     } catch (error) {
-      console.error('Erro ao remover foto de perfil do S3:', error);
+      //console.error('Erro ao remover foto de perfil do S3:', error);
       throw new BadRequestException('Erro ao remover a foto de perfil.');
     }
   }

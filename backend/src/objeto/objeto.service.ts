@@ -34,7 +34,7 @@ export class ObjetoService {
         ContentType: file.mimetype,
       }).promise();
     } catch (error) {
-      console.error('Erro ao enviar arquivo para o S3:', error);
+      //console.error('Erro ao enviar arquivo para o S3:', error);
       throw new BadRequestException('Erro ao enviar arquivo para o S3');
     }
 
@@ -68,7 +68,7 @@ export class ObjetoService {
         Key: file.url,
       }).promise();
     } catch (error) {
-      console.error('Erro ao excluir arquivo do S3:', error);
+      //console.error('Erro ao excluir arquivo do S3:', error);
       throw new NotFoundException('Arquivo não encontrado no S3');
     }
 
@@ -149,7 +149,7 @@ export class ObjetoService {
 
     try {
       const objectData = await s3.getObject(getObjectParams).promise();
-      console.log('Object Data coletado:', objectData); // Adicionado para depuração
+      //console.log('Object Data coletado:', objectData); // Adicionado para depuração
 
       if (objectData.Body) {
         return {
@@ -160,7 +160,7 @@ export class ObjetoService {
         throw new BadRequestException('O arquivo no S3 está vazio ou não pode ser acessado');
       }
     } catch (error) {
-      console.error('Erro ao acessar o S3:', error);
+      //console.error('Erro ao acessar o S3:', error);
       throw new BadRequestException('Erro ao acessar o S3');
     }
   }
