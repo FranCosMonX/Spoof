@@ -1,0 +1,83 @@
+ 
+@startuml
+note "Um usuário só pode acessar a aplicação ao ter algum cadastro efetivado" as detalheUsuario
+note "As ações feitas na interface de Postagem são efetivadas sob as informações de Objeto" as detalhePOST
+
+class Usuario{
+    id: string auto increment
+    nome: string
+    telefone: string
+    email: string
+    usuario: string
+    senha: string
+    createdAt: Date
+    updatedAt: Date
+}
+
+class Objeto{
+    id: string auto increment
+    nome: string
+    url: string
+    tag: List<string>
+    genero: string
+    descricao: string
+    createdAt: Date
+    updatedAt: Date
+}
+
+interface Signin{
+    -Acess_token: string
+    +userID: string
+}
+
+interface Signup{
+    -nome: string
+    -telefone: string
+    -email: string
+    -usuario: string
+    -senha: string
+    +Cadastrar()
+}
+
+interface Perfil{
+    -foto: Object
+    -nome: string
+    -telefone: string
+    -email: string
+    -usuario: string
+    -senha: string
+    +setBasicInformation(usuarioID, BasicInformation): {Usuario, createdAt, updatedAt}
+    +setSensitiveInformation(usuarioID, SensitiveInformation): {Usuario, createdAt, updatedAt}
+    +getInformation(usuarioID): {Usuario, createdAt, updatedAt}
+    +setProfilePicture(usuarioID): Object
+    +removeProfilePicture(usuarioID): Object
+}
+
+interface Biblioteca{
+    +postagens: List<Objeto>
+}
+
+interface Postagem{
+    +getList(usuarioID): List<Objeto>
+    +save(): Objeto
+    +deletePost(objetoID): Objeto
+    +getDetailsPost(objetoID): Objeto
+    +getPostsByKeyword(objetoID): List<Objeto>
+    +setPost(usuarioID, objetoID): Objeto
+}
+
+detalheUsuario .up- Usuario
+detalhePOST .down- Objeto
+Usuario -up- Signup : efetua Cadastro
+Usuario .- Signup : POST
+Signup -right- Signin : efetua login
+Signup .- Signin : POST
+Signin -down- Perfil : Gerenciamento de perfil
+Signin .- Perfil : GET, PATCH, POST, DEL
+Signin -up- Biblioteca : GET
+Signin .- Biblioteca : Listar Post's
+Signin -right- Postagem : Gerenciamento de Post
+Signin .- Postagem : GET, PATCH, POST, DEL
+Objeto -- Postagem : feito alterações sob
+
+@enduml

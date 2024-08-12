@@ -34,7 +34,7 @@ export default function UserMenu() {
       setLogged(false);
       enqueueSnackbar('Deslogado com sucesso!', { variant: 'success' });
       sessionStorage.removeItem('bearerToken');
-      router.push('/');
+      router.reload();
     }
   }
 

@@ -15,7 +15,7 @@ export class AuthController {
   @Post('signup')
   async signup(@Res() res: Response, @Body() dto: AuthDto) {
     const result = await this.authService.signup(dto);
-    console.log(result)
+    //console.log(result)
     return res.send(result);
   }
 
@@ -24,7 +24,7 @@ export class AuthController {
   @Post('signin')
   async signin(@Res() res, @Body() dto: SigninDto): Promise<Login> {
     const result = await this.authService.signin(dto);
-    console.log(result)
+    //console.log(result)
     return res.send(result);
   }
 
@@ -33,7 +33,7 @@ export class AuthController {
   @Get('signout')
   signout(@Res() res) {
     const result = this.authService.signout();
-    console.log(result)
+    //console.log(result)
     return res.send(result)
   }
 }

@@ -16,7 +16,7 @@ export class AuthService {
      * @returns 
      */
     async signup(dto: AuthDto) {
-        console.log('DTO recebido:', dto);
+        //console.log('DTO recebido:', dto);
 
         const { nome, email, usuario, telefone, senha } = dto;
 
@@ -82,7 +82,7 @@ export class AuthService {
                 ? await this.prisma.usuario.findUnique({ where: { usuario } })
                 : await this.prisma.usuario.findUnique({ where: { telefone } });
 
-        console.log(dto)
+        //console.log(dto)
         if (!user) {
             throw new UnauthorizedException('Credenciais inválidas');
         }
