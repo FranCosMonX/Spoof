@@ -20,6 +20,11 @@ export default function UserMenu() {
     setAnchorEl(null);
   };
 
+  const editUser = () => {
+    setAnchorEl(null);
+    router.push('/user/Edit');
+  };
+
   const router = useRouter();
 
   const logout = () => {
@@ -29,6 +34,7 @@ export default function UserMenu() {
       setLogged(false);
       enqueueSnackbar('Deslogado com sucesso!', { variant: 'success' });
       sessionStorage.removeItem('bearerToken');
+      router.push('/');
     }
   }
 
@@ -116,15 +122,10 @@ export default function UserMenu() {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={editUser}>
               <Avatar /> Perfil
             </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
-                <Settings fontSize="small" />
-              </ListItemIcon>
-              Meu Perfil
-            </MenuItem>
+            
             <MenuItem onClick={logout}>
               <ListItemIcon>
                 <Logout fontSize="small" />

@@ -2,10 +2,18 @@ import { useEffect, useState } from "react";
 import { Box, Button, Container, CssBaseline, Grid, TextField, Typography } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import InputMask from 'react-input-mask';
+import axios from "axios";
+import { enqueueSnackbar } from "notistack";
+import { useRouter } from "next/router";
 
 const defaultTheme = createTheme();
 
 export default function Edit(){
+  const url = process.env.NEXT_PUBLIC_API_URL;
+  const userId = sessionStorage.getItem('user');
+  const token = sessionStorage.getItem('bearerToken');
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     nome: '',
     usuario: '',
@@ -18,6 +26,7 @@ export default function Edit(){
   });
 
   const [visible, setVisible] = useState(false);
+  const [novaSenha, setNovaSenha] = useState('');
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,10 +37,73 @@ export default function Edit(){
     }));
   };
 
+  const handleSensitiveDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSensitiveData((prevSensitiveData) => ({
+      ...prevSensitiveData,
+      [name]: value,
+    }));
+  };
+
   useEffect(() => {
-    //recuperar as informacoes do usuario
-    //preencher nos campos
+    const getUserInfo = async () => {
+      await axios.get(url + '/users/' + userId, {
+        headers: {
+          'Authorization': 'Bearer ' + token 
+        }
+      })
+      .then(response => {
+        const data = response.data.user;
+
+        setFormData({
+          usuario: data.usuario,
+          telefone: data.telefone
+        })
+      })
+      .catch(error => {
+        console.error(error)
+      })
+
+    }
+
+    getUserInfo()
   }, [])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (formData.usuario === '' || formData.telefone === '') {
+      enqueueSnackbar('Nome de usuário e telefone são obrigatórios', { variant: 'error' });
+      return;
+    }
+
+    if(sensitiveData.senha !== novaSenha){
+      enqueueSnackbar('Senhas não coincidem', { variant: 'error' });
+      return;
+    }
+
+    try{
+      await axios.patch(url + '/users/' + userId + '/update/basicData', formData, {
+        headers: {
+          'Authorization': 'Bearer ' + token 
+        }
+      });
+
+      if(sensitiveData.email.length !== 0 || sensitiveData.senha.length !== 0){
+        await axios.patch(url + '/users/' + userId + '/update/sensitiveData', sensitiveData, {
+          headers: {
+            'Authorization': 'Bearer ' + token 
+          }
+        });
+      }
+
+      enqueueSnackbar('Perfil salvo', { variant: 'success' });
+      router.push('/');
+
+    }catch(error){
+      enqueueSnackbar('Não foi possível editar usuário', { variant: 'error' });
+    }
+  }
 
     return(
       <ThemeProvider theme={defaultTheme}>
@@ -43,22 +115,9 @@ export default function Edit(){
             Editar Perfil
           </Typography>
 
-          <Box component="form" noValidate onSubmit={() => {}} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
 
-          <Grid item xs={12}>
-                <TextField
-                  autoComplete="name"
-                  name="nome"
-                  required
-                  fullWidth
-                  id="nome"
-                  label="Nome"
-                  autoFocus
-                  value={formData.nome}
-                  onChange={handleChange}
-                />
-              </Grid>
 
               <Grid item xs={12}>
                 <TextField
@@ -90,22 +149,8 @@ export default function Edit(){
                   />
                 </InputMask>
               </Grid>
-
-              <Grid item xs={12}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Salvar Perfil
-              </Button>
-              </Grid>
-            
             </Grid>
-            </Box>
-
-            <Box component="form" noValidate onSubmit={() => {}} sx={{ mt: 3 }}>
+            
             <Grid container spacing={2}>
               <Grid item xs={12}>
 
@@ -150,11 +195,11 @@ export default function Edit(){
                         required
                         fullWidth
                         id="email"
-                        label="Email"
+                        label="Novo email"
                         name="email"
                         autoComplete="email"
                         value={sensitiveData.email}
-                        onChange={handleChange}
+                        onChange={handleSensitiveDataChange}
                       />
                     </Grid>
 
@@ -163,28 +208,42 @@ export default function Edit(){
                         required
                         fullWidth
                         name="senha"
-                        label="Senha"
+                        label="Nova senha"
                         type="password"
                         id="senha"
                         autoComplete="new-password"
                         value={sensitiveData.senha}
-                        onChange={handleChange}
+                        onChange={handleSensitiveDataChange}
                       />
                     </Grid>
 
                     <Grid item xs={12}>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      sx={{ mt: 3, mb: 2 }}
-                    >
-                      Salvar credenciais
-                    </Button>
+                      <TextField
+                        required
+                        fullWidth
+                        name="senha"
+                        label="Confirmar senha"
+                        type="password"
+                        id="novasenha"
+                        autoComplete="new-password"
+                        value={novaSenha}
+                        onChange={(e) => setNovaSenha(e.target.value)}
+                      />
                     </Grid>
                   </>
                 )
               }
+              </Grid>
+
+              <Grid item xs={12}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Salvar Perfil
+              </Button>
               </Grid>
               </Box>
         </Container>

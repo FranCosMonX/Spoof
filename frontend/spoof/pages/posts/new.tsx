@@ -1,22 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Chip, Container, createTheme, CssBaseline, Grid, TextField, ThemeProvider, Typography } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { MuiFileInput } from 'mui-file-input';
 import AttachFileIcon from '@mui/icons-material/AttachFile'
+import axios from "axios";
+import { useRouter } from "next/router";
 
 export default function New(){
   const [file, setFile] = useState<File | null>(null);
   const [descricao, setDescricao] = useState('');
   const [tags, setTags] = useState<String[]>([]);
   const [tag, setTag] = useState('');
+  const [id, setId] = useState(null)
 
     const defaultTheme = createTheme();
+    const router = useRouter();
+
+    const url = process.env.NEXT_PUBLIC_API_URL;
+    let userID: String | null; 
+
+    let form = new FormData();
+
+    useEffect(() => {
+      setId(sessionStorage.getItem('user'));
+    }, []);
 
     const uploadFile = (newFile: File | null) => {
       setFile(newFile)
     }
 
     const addTag = () => {
+      if(tag.length === 0) return;
+      
       setTag('');
       const newTags = [...tags, tag];
       setTags(newTags);
@@ -30,18 +45,29 @@ export default function New(){
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      const token = sessionStorage.getItem('bearerToken');
 
       if (descricao.length === 0 || !file) {
         enqueueSnackbar('Arquivo e descrição são obrigatórios', { variant: 'error' });
         return;
       }
 
-      //post para /objeto/user-id/upload
-      //mandando o arquivo, description e tags
+      form.set('file', file);
+      form.set('descricao', descricao);
+      form.set('tags', tags.join());
 
-      console.log(file)
-      console.log(descricao)
-      console.log(tags)
+      await axios.post(`${url}/objeto/${id}/upload`, form, {
+        headers:{
+          'Authorization': 'Bearer ' + token
+        }
+      })
+      .then(response => {
+        enqueueSnackbar('Post criado com sucesso!', { variant: 'success' });
+        router.push('/');
+      })
+      .catch(error => {
+        console.error(error);
+      })
     }
 
     return(
