@@ -8,11 +8,26 @@ O backend foi desenvolvido por meio de um projeto **React com nestJS + Prisma** 
 
 Uma representação da implementação da API pode ser vista na imagem logo a seguir, que descreve como ocorre a comunicação entre os componentes implementados e os verbos HTTPs usados (resumo).
 
-!(asdsad)[../src/img/InteracaoComponentsBackend.svg]
 <div style="display: flex; justify-content: center;">
-    <img src="../src/img/InteracaoComponentsBackend.svg" alt="Imagem descrevendo como esta ocorrendo a comunicação entre os componentes do backend">
+    <img src="../src/img/plantuml-diagram (2).png" alt="Imagem descrevendo como esta ocorrendo a comunicação entre os componentes do backend">
 </div>
 
+Como pode ser visto, o usuário precisa criar uma conta para poder ter acesso a funcionalidade de Login, necessária para conseguir o **access_token** para acessar a aplicação. É importante destacar que o token expira apó´s 30 minutos.
+
+Dentre as funcionalidades implementadas estão:
+1. Cadastrar Usuário;
+2. Logar;
+3. Postar Objeto Multimidia;
+4. Obter Lista de Objetos Multimidia Postados;
+5. Obter Detalhes de um Objeto Multimidia Postado;
+6. Excluir Objeto Multimidia Postado;
+7. Editar Objeto Multimidia Postado;
+8. Baixar o Objeto Multimidia no lado do cliente: exibir o objeto multimidia;
+9. Obter Informações do Perfil do Usuário;
+10. Alterar a Foto de Perfil do Usuário;
+11. Alterar Informações básicas do Usuário;
+12. Alterar Informações Sensíveis do Usuário;
+13. Deletar Foto de Perfil, colocando uma foto default;
 
 ## Projeto NestJS
 
