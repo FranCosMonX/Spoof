@@ -1,11 +1,11 @@
 {
   "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
   "/authentication/Cadastro": "pages/authentication/Cadastro.js",
+  "/posts/new/[id]": "pages/posts/new/[id].js",
   "/authentication/Login": "pages/authentication/Login.js",
   "/": "pages/index.js",
   "/posts/new": "pages/posts/new.js",
-  "/posts/new/[id]": "pages/posts/new/[id].js",
   "/user/Edit": "pages/user/Edit.js",
+  "/_error": "pages/_error.js",
   "/_document": "pages/_document.js"
 }
