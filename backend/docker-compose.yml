@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: db-spoof
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB= spoof
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - '5432:5432'
+volumes:
+  postgres:
+

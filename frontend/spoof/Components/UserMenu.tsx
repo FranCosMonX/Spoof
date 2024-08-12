@@ -1,5 +1,6 @@
 import { Logout, Settings } from '@mui/icons-material';
 import { Avatar, Box, Button, Grid, IconButton, ListItemIcon, Menu, MenuItem, Link, Tooltip } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import { useRouter } from "next/router";
 import * as React from 'react';
 import { useSnackbar } from 'notistack';
@@ -19,6 +20,11 @@ export default function UserMenu() {
     setAnchorEl(null);
   };
 
+  const editUser = () => {
+    setAnchorEl(null);
+    router.push('/user/Edit');
+  };
+
   const router = useRouter();
 
   const logout = () => {
@@ -28,6 +34,7 @@ export default function UserMenu() {
       setLogged(false);
       enqueueSnackbar('Deslogado com sucesso!', { variant: 'success' });
       sessionStorage.removeItem('bearerToken');
+      router.push('/');
     }
   }
 
@@ -51,18 +58,24 @@ export default function UserMenu() {
         <Grid item>
           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
             {logged ? (
-              <Tooltip title="Account settings">
-                <IconButton
-                  onClick={handleClick}
-                  size="small"
-                  sx={{ ml: 2 }}
-                  aria-controls={open ? 'account-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                >
-                  <Avatar sx={{ width: 32, height: 32 }} />
-                </IconButton>
-              </Tooltip>
+              <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                <Button variant="contained" startIcon={ <Add /> } href="/posts/new">
+                  Novo Post
+                </Button>
+
+                <Tooltip title="Account settings">
+                  <IconButton
+                    onClick={handleClick}
+                    size="small"
+                    sx={{ ml: 2 }}
+                    aria-controls={open ? 'account-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                  >
+                    <Avatar sx={{ width: 32, height: 32 }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             ) : (
               <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                 <Button variant="contained" href="/authentication/Login" sx={{ marginRight: 2 }}>
@@ -109,15 +122,10 @@ export default function UserMenu() {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={editUser}>
               <Avatar /> Perfil
             </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
-                <Settings fontSize="small" />
-              </ListItemIcon>
-              Meu Perfil
-            </MenuItem>
+            
             <MenuItem onClick={logout}>
               <ListItemIcon>
                 <Logout fontSize="small" />
