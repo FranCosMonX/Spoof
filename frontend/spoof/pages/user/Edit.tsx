@@ -15,10 +15,9 @@ export default function Edit(){
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    nome: '',
     usuario: '',
     telefone: '',
-  });
+  });  
 
   const [sensitiveData, setSensitiveData] = useState({
     email: '',
@@ -47,27 +46,25 @@ export default function Edit(){
 
   useEffect(() => {
     const getUserInfo = async () => {
-      await axios.get(url + '/users/' + userId, {
-        headers: {
-          'Authorization': 'Bearer ' + token 
-        }
-      })
-      .then(response => {
+      try {
+        const response = await axios.get(url + '/users/' + userId, {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+          },
+        });
         const data = response.data.user;
-
+  
         setFormData({
           usuario: data.usuario,
-          telefone: data.telefone
-        })
-      })
-      .catch(error => {
-        console.error(error)
-      })
-
-    }
-
-    getUserInfo()
-  }, [])
+          telefone: data.telefone,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    getUserInfo();
+  }, [url, userId, token]);  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
