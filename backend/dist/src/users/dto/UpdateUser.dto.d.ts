@@ -1,7 +1,7 @@
 export declare class BasicInformationDTO {
     usuario: string;
     telefone: string;
-    descrição: string;
+    descricao: string;
 }
 export declare class SensitiveInformationDTO {
     email: string;

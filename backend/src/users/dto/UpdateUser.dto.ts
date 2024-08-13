@@ -11,7 +11,7 @@ export class BasicInformationDTO {
 
   @IsOptional()
   @IsString({ message: "A descrição deve ser uma String." })
-  public descrição: string;
+  public descricao: string;
 }
 
 export class SensitiveInformationDTO {
