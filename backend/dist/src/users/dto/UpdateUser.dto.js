@@ -28,7 +28,7 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)({ message: "A descrição deve ser uma String." }),
     __metadata("design:type", String)
-], BasicInformationDTO.prototype, "descri\u00E7\u00E3o", void 0);
+], BasicInformationDTO.prototype, "descricao", void 0);
 class SensitiveInformationDTO {
 }
 exports.SensitiveInformationDTO = SensitiveInformationDTO;
