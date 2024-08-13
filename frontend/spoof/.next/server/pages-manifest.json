@@ -1,11 +1,1 @@
-{
-  "/_app": "pages/_app.js",
-  "/authentication/Cadastro": "pages/authentication/Cadastro.js",
-  "/posts/new/[id]": "pages/posts/new/[id].js",
-  "/authentication/Login": "pages/authentication/Login.js",
-  "/": "pages/index.js",
-  "/posts/new": "pages/posts/new.js",
-  "/user/Edit": "pages/user/Edit.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js"
-}
+{"/_app":"pages/_app.js","/_error":"pages/_error.js","/":"pages/index.html","/authentication/Cadastro":"pages/authentication/Cadastro.html","/posts/new/[id]":"pages/posts/new/[id].html","/authentication/Login":"pages/authentication/Login.html","/posts/new":"pages/posts/new.html","/user/Edit":"pages/user/Edit.html","/_document":"pages/_document.js","/404":"pages/404.html"}
