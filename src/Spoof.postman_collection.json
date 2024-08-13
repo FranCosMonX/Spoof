@@ -1,0 +1,1315 @@
+{
+	"info": {
+		"_postman_id": "01975350-dcc5-46db-834b-db3f72316040",
+		"name": "Spoof",
+		"description": "É um aplicativo de gerenciamento de objetos multimídia, sendo imagens, vídeos e áudios. Qualquer aplicativo front-end pode acessar os endpoints, já que não há bloqueio por CORS. Se algum **desenvolvedor** usar o backend para construir outro reforçando as práticas recomendadas pela comunidade, essa é uma das configurações que devem ser alteradas.\n\n## Funcionalidades\n\nEste aplicativo implementa as seguintes funcionalidades de caso de uso:\n\n<img src=\"https://content.pstmn.io/dbaae9cf-b21e-48bb-8992-42ea75dbdf21/VUMgRGlhZ3JhbS5zdmc=\" alt=\"UC%20Diagram\">\n\n1. **Registrar usuário**: envio de dados alfanuméricos para criar uma conta de usuário.\n    \n2. **Login/Logout**: é necessário apresentar as credenciais para fazer login. É necessário estar logado para que a funcionalidade Logout fique visível para o usuário.\n    \n3. **Cadastrar Post:** é necessário que o usuário preencha todos os campos para cadastrar o post e isso inclui, obrigatoriamente, um objeto multimídia que pode ou não sofrer algumas alterações sob os comandos acionados pelo usuário.\n    \n4. **Gerenciar postagem:** a visualização da postagem é essencial para o usuário. Ele pode visualizar, editar ou excluir informações de suas próprias postagens.\n    \n5. **Processamento de objetos.**\n    \n6. **Gerenciar perfil:** Visualizar informações do perfil do usuário é essencial. Além de visualizar suas informações, o usuário poderá atualizá-las, mas não poderá excluí-las ou deixar o campo em branco.\n    \n7. **Pesquisar postagem:** é possível que o usuário pesquise por uma postagem específica. Para isso, o aplicativo implementa um recurso responsável por coletar o texto de entrada do usuário e buscar uma lista de postagens com o mesmo assunto contido no texto do usuário.\n    \n8. **Filtro:** essa funcionalidade é implementada pelo frontend, ou seja, a lista de postagens pode ser usada e o objeto multimídia pode ser analisado antes de incluí-lo na lista de postagens visíveis para o usuário.\n    \n\n> Note que o usuário deve ter um cadastro para ter acesso ao Login/Logout e fazer login na aplicação para poder acessar as demais funcionalidades. \n  \n\n## Entidades Principais\n\nEsta aplicação só tem duas entidades principais: Usuário (responsável por criar seu cadastro, acessar a aplicação e interagit diretamente com as postagens de objetos multimidias) e o Objeto (objeto multimidia podendo ser uma imagem, vídeo ou áudio) que pode vir acompanhado de outros elementos textuais como descrição, tags e gênero(s).\n\n## Referências\n\nO código da aplicação backend pode ser visto em: [Spoof - Gerenciador de Objetos Multimídia ](https://github.com/FranCosMonX/Spoof/tree/main/backend) armazenado no reposistório remoto do Github",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27413236",
+		"_collection_link": "https://orange-meadow-145505.postman.co/workspace/Projetos-UFPI~f83391cb-2352-4765-8dcf-dae2c6346ddc/collection/27413236-01975350-dcc5-46db-834b-db3f72316040?action=share&source=collection_link&creator=27413236"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Signin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response has the required fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"console.log(responseData)",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist.and.to.be.a('string');",
+									"    pm.expect(responseData.accesss_token).to.exist.and.to.be.a('string');",
+									"    pm.expect(responseData.user_id).to.exist.and.to.be.a('string');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Access token is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.accesss_token).to.be.a('string').and.to.have.lengthOf.at.least(1);",
+									"});",
+									"",
+									"",
+									"pm.test(\"User ID is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"",
+									"    pm.expect(responseData.user_id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"User ID should not be empty\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Presence of Content-Type header in the response\", function () {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.exist;",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"usuario\": \"carlos\",\n    \"senha\": \"carlos\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_LOCAL}}/auth/signin",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						},
+						"description": "A requisição `POST /auth/signin` serve para registrar o usuário como logado e retornar um token de sessão pelo corpo da resposta. Este token deverá ser passado em todos os cabeçalhos das futuras requisições do usuário Logado. Um exemplo de resposta bem sucedida é:\n\n``` json\n{\n    \"message\": \"Login bem sucedido\",\n    \"accesss_token\": \"eyJh...\",\n    \"user_id\": \"297...\"\n}\n\n ```\n\nA solicitação bem sucedida deve retornar o código `200 - OK`.\n\nO login pode ser efetuado ao passar o **telefone, usuário** ou **email**, além da **senha de usuário** (obrigatória), assim como mostrado a seguir.\n\n## Exemplo de Resposta\n\n``` json\n{\n    \"message\": \"Login bem sucedido\",\n    \"accesss_token\": \"eyJh...\",\n    \"user_id\": \"83c...\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 201\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Message field is present in the response\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.have.property('message');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Message field has a non-empty string value\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has the required Content-Type header\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type header is set to application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Message field is 'Cadastrado com sucesso!'\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData.message).to.equal(\"Cadastrado com sucesso!\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Presence of specific header in the response\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"carlos\",\r\n    \"usuario\": \"carlos\",\r\n    \"email\": \"carlos@gmail.com\",\r\n    \"telefone\": \"86999119719\",\r\n    \"senha\": \"carlos\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_LOCAL}}/auth/signup",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						},
+						"description": "A requisição `POST /auth/signup` serve para cadastrar um usuário na aplicação. No corpo da requisição deve conter todos os campos no formato JSON, assim como visto no exemplo mais adiante.\n\nA resposta para a requisição deve ser `201 - Created`.\n\n## Exemplo de Resposta\n\n``` json\n{\n    \"message\": \"Cadastrado com sucesso!\"\n}\n\n ```"
+					},
+					"response": []
+				}
+			],
+			"description": "Contém um conjunto de requisições relacionadas a autenticação do usuário. São elas:\n\n1. Logar: `/auth/signin`\n    \n2. Cadastrar: `/auth/signup`\n    \n\nNenhuma dos endpoints necessitam de autorização."
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Information",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response should have all the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.user).to.exist;\r",
+									"    pm.expect(responseData.user.id).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.user.nome).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.user.usuario).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.user.descricao).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.user.email).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.user.telefone).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.user.profilePicture).to.satisfy(function(value) {\r",
+									"        return value === null || typeof value === 'string';\r",
+									"    });\r",
+									"    pm.expect(responseData.user.createdAt).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.user.updatedAt).to.exist.and.to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Phone number is in a valid format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.user.telefone).to.match(/^\\d{10,11}$/);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"CreatedAt and updatedAt fields are in a valid date-time format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.user.createdAt).to.match(/\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z/);\r",
+									"    pm.expect(responseData.user.updatedAt).to.match(/\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z/);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_LOCAL}}/users/{{USER_ID}}",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"users",
+								"{{USER_ID}}"
+							]
+						},
+						"description": "A requisição `GET /users/[id_user]` serve para buscar as informações de perfil do usuário logado. Entretando, para fazer isto é necessário que seja enviado o token, coletado no momento do **login** no cabeçalho da requisição assim como mostra o exemplo.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e o valor esperado retornado.\n\n## Exemplo de Resposta\n\n``` json\n{\n    \"user\": {\n        \"id\": \"b625...8ff9\",\n        \"nome\": \"carlos\",\n        \"usuario\": \"carlos\",\n        \"email\": \"carlos@gmail.com\",\n        \"telefone\": \"86999119719\",\n        \"descricao\": \"Sou um eng. de Software formado na UFPI\",\n        \"profilePicture\": null,\n        \"createdAt\": \"2024-08-13T17:55:30.208Z\",\n        \"updatedAt\": \"2024-08-13T18:00:27.125Z\"\n    }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "BasicInformation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.user.id).to.be.a('string');\r",
+									"    pm.expect(responseData.user.nome).to.be.a('string');\r",
+									"    pm.expect(responseData.user.usuario).to.be.a('string');\r",
+									"    pm.expect(responseData.user.email).to.be.a('string');\r",
+									"    pm.expect(responseData.user.telefone).to.be.a('string');\r",
+									"    pm.expect(responseData.user.descricao).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.user.createdAt).to.exist;\r",
+									"    pm.expect(responseData.user.updatedAt).to.exist;\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Phone number must be a string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.user.telefone).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Username should be a string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.user.usuario).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Description should be a string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    if (responseData.user) {\r",
+									"        pm.expect(responseData.user.descricao).to.be.a('string');\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"descricao\": \"Sou um eng. de Software formado na UFPI\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_LOCAL}}/users/{{USER_ID}}/update/basicData",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"users",
+								"{{USER_ID}}",
+								"update",
+								"basicData"
+							]
+						},
+						"description": "A requisição `PATCH /users/[id]/update/basicData`é ser usada para fazer a atualização das informações básicas do usuário. São elas: usuário, descrição de perfil e telefone. É importante que **ao menos uma das informações** seja informada no corpo da requisição.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e os dados do usuário é retornado.\n\n**Validações:**\n\n1. **telefone**: deve ser uma string;\n    \n2. **usuario**: deve ser uma string;\n    \n3. **descricao:** deve ser uma string;\n    \n\nAlém disto, no corpo da requisição deve conter ao menos uma das informações para que ela seja atendida."
+					},
+					"response": []
+				},
+				{
+					"name": "SensitiveInformation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('user').that.is.an('object');\r",
+									"    pm.expect(responseData).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"User ID is a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.user.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"User ID should not be empty\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"User data is returned with valid email format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.user.email).to.match(/^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)*(\\.[a-z]{2,})$/);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type header is set to application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"senha\": \"carlos\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_LOCAL}}/users/{{USER_ID}}/update/sensitiveData",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"users",
+								"{{USER_ID}}",
+								"update",
+								"sensitiveData"
+							]
+						},
+						"description": "A requisição `PATCH /users/[id]/update/basicData`é ser usada para fazer a atualização das informações sensíveis do usuário. São elas: email e senha. É importante que **ao menos uma das informações** seja informada no corpo da requisição. Vale ressaltar que a senha não é verificada no backend, ou seja, ela deve ser validada no frontend e repassada para que o backend.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e os dados do usuário é retornado.\n\n**Validações:**\n\n1. **Senha**: deve ser uma string de 6 à 20 caracteres;\n    \n2. **Email**: deve ser uma string contendo um Email (Sintaxe apenas).\n    \n\nAlém disto, no corpo da requisição deve conter ao menos uma das informações para que ela seja atendida."
+					},
+					"response": []
+				},
+				{
+					"name": "ProfilePicture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 1200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(1200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.statusCode).to.exist;\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"    pm.expect(responseData.data).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"StatusCode is a non-negative integer\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData.statusCode).to.be.a('number');\r",
+									"    pm.expect(responseData.statusCode).to.be.at.least(0);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Message is a non-empty string\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/franc/Downloads/arquitetura_base (1).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_LOCAL}}/users/{{USER_ID}}/upload-profile-picture",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"users",
+								"{{USER_ID}}",
+								"upload-profile-picture"
+							]
+						},
+						"description": "A requisição `POST /users/[id]/upload-profile-picture` é ser usada para fazer a atualização da imagem de perfil do usuário. A imagem deve estar no corpo da requisição assim como demonstrado logo a seguir.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e os dados do usuário é retornado."
+					},
+					"response": []
+				},
+				{
+					"name": "ProfilePicture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields - statusCode and message\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property('statusCode');\r",
+									"    pm.expect(responseData).to.have.property('message');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(600);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_LOCAL}}/users/{{USER_ID}}/remove-profile-picture",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"users",
+								"{{USER_ID}}",
+								"remove-profile-picture"
+							]
+						},
+						"description": "A requisição `DELETE /users/[id]/remove-profile-picture` é ser usada para remover a imagem de perfil do usuário. Quando removida, uma imagem padrão é adicionada, impedindo que o campo fique nulo.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e os dados atualizados do usuário é retornado."
+					},
+					"response": []
+				}
+			],
+			"description": "Contém um conjunto de endpoints de acesso as funcionalidades que afetam diretamente os dados do usuário, assim como:\n\n1. Alterar dados sensíveis: dados importantes que não devem ser compartilhado, `/users/[id]/update`\n    \n2. Alterar dados básicos: dados que podem ser compartilhado, `/users/[id]/update`\n    \n3. Visualizar informações: ver as informações do usuário, `/users/[id]`\n    \n4. Atualizar imagem: atualizar foto de usuário. `/users/[id]/upload-profile-picture`\n    \n5. Remover Imagem: remover foto de usuário, adicionando a foto padrão no lugar. `/users/[id]/remove-profile-picture`\n    \n\nTodas os endpoints necessitam de um token de acesso, coletado no momento do login.",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{USER_TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Object",
+			"item": [
+				{
+					"name": "Save",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.id).to.be.a('string');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.description).to.be.a('string');\r",
+									"    pm.expect(responseData.url).to.be.a('string');\r",
+									"    pm.expect(responseData.tags).to.be.an('array');\r",
+									"    pm.expect(responseData.userId).to.be.a('string');\r",
+									"    pm.expect(responseData.createdAt).to.exist;\r",
+									"    pm.expect(responseData.updatedAt).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tags array is present and contains expected number of elements\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property('data');\r",
+									"    pm.expect(responseData.data).to.have.property('tags').that.is.an('array');\r",
+									"    pm.expect(responseData.data.tags).to.have.lengthOf(0);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is a valid JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Data object exists and is not empty\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.data).to.exist.and.to.be.an('object');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Data object contains id, name, description, url, tags, userId, createdAt, and updatedAt properties\", function () {\r",
+									"    const responseData = pm.response.json().data;\r",
+									"    pm.expect(responseData).to.include.all.keys('id', 'name', 'description', 'url', 'tags', 'userId', 'createdAt', 'updatedAt');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"URL is in a valid format\", function () {\r",
+									"    const responseData = pm.response.json().data;\r",
+									"    pm.expect(responseData.url).to.match(/^uploads\\/[0-9]+-[0-9]+.png$/);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/franc/Downloads/plantuml-diagram (2).png"
+								},
+								{
+									"key": "Name",
+									"value": "\"Arquitetura base\"",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "\"arquitetura de tudo\"",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_LOCAL}}/objeto/{{USER_ID}}/upload",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"objeto",
+								"{{USER_ID}}",
+								"upload"
+							]
+						},
+						"description": "A requisição `POST /objeto/[userID]/upload` é ser usada para salvar um objeto multimidia na Amazon S3 e algumas informações, editadas pelo usuário, no Banco de Dados (Amazon RDS). Algumas informações podem ser passadas junto com o objeto multimidia, dependendo de seu tipo. São elas:\n\n- **Áudio e vídeo**: lista de tags, descrição e gênero;\n    \n- **Imagem:** lista de tags e descrição.\n    \n\nVale ressaltar que, o preenchimento de todos os dados não são obrigatórios. Os dados que podem ser passados, por meio de um formData, são:\n\n- **description;**\n    \n- **name;**\n    \n- **file;**\n    \n\nO resposta deve gerar o código `201` informando que a solicitação foi atendida e os dados da postagem do objeto são retornados.\n\n## Exemplo de Resposta\n\n``` json\n{\n    \"message\": \"Arquivo enviado com sucesso\",\n    \"data\": {\n        \"id\": \"60...\",\n        \"name\": \"plantuml-diagram.png\",\n        \"description\": \"\",\n        \"url\": \"uploads/1723439295537-708660715.png\",\n        \"tags\": [],\n        \"userId\": \"83c...\",\n        \"createdAt\": \"2024-08-12T05:08:16.451Z\",\n        \"updatedAt\": \"2024-08-12T05:08:16.451Z\"\n    }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('id');\r",
+									"    pm.expect(responseData).to.have.property('name');\r",
+									"    pm.expect(responseData).to.have.property('description');\r",
+									"    pm.expect(responseData).to.have.property('url');\r",
+									"    pm.expect(responseData).to.have.property('tags');\r",
+									"    pm.expect(responseData).to.have.property('userId');\r",
+									"    pm.expect(responseData).to.have.property('createdAt');\r",
+									"    pm.expect(responseData).to.have.property('updatedAt');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Id is in a valid UUID format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    responseData.data.forEach(function (item) {\r",
+									"        pm.expect(item.id).to.match(/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}/);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Url is a valid URL format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.url).to.match(/^https?:\\/\\/[^\\s$.?#].[^\\s]*$/);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjgzY2ZlZjZkLTE5ODEtNGE1Yi05ODU3LTZjYTk0YmQ5ODFiOCIsImVtYWlsIjoiY3V6Y3V6QGdtYWlsLmNvbSIsImlhdCI6MTcyMzQzOTIwOSwiZXhwIjoxNzIzNDQxMDA5fQ.tPZn4DLIU7NqL_hYMFPXO-pafalCmoiOug-1FLNNGwo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_LOCAL}}/objeto/{{USER_ID}}/{{POST_ID}}",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"objeto",
+								"{{USER_ID}}",
+								"{{POST_ID}}"
+							]
+						},
+						"description": "A requisição `DELETE /objeto/[objectID]` é ser usada para deletar todas as informações de um objeto multimidia tanto na instância da Amazon S3 quanto demais informações salvas na Amazon RDS.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e os dados referentes ao objeto são retornados.\n\n## Exemplo de Resposta\n\n``` json\n{\n    \"message\": \"Arquivo excluído com sucesso\",\n    \"data\": {\n        \"id\": \"601ef204-dddd-4a6d-ad8f-071d0aa0b094\",\n        \"name\": \"plantuml-diagram.png\",\n        \"description\": \"\",\n        \"url\": \"uploads/1723439295537-708660715.png\",\n        \"tags\": [],\n        \"userId\": \"83cfef6d-1981-4a5b-9857-6ca94bd981b8\",\n        \"createdAt\": \"2024-08-12T05:08:16.451Z\",\n        \"updatedAt\": \"2024-08-12T05:08:16.451Z\"\n    }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is within an acceptable range\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response should have the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.data).to.be.an('array').that.is.not.empty;\r",
+									"\r",
+									"    responseData.data.forEach(function(item) {\r",
+									"        pm.expect(item).to.include.keys('id', 'name', 'description', 'url', 'tags', 'userId', 'createdAt', 'updatedAt');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each 'id' should be a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    responseData.data.forEach(function (item) {\r",
+									"        pm.expect(item.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Id should not be empty\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Data array should exist\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.data).to.exist;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check the date-time format of createdAt and updatedAt\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    responseData.data.forEach((item) => {\r",
+									"        pm.expect(item.createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/);\r",
+									"        pm.expect(item.updatedAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_LOCAL}}/objeto/{{USER_ID}}/list",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"objeto",
+								"{{USER_ID}}",
+								"list"
+							]
+						},
+						"description": "A requisição `GET /objeto/[objectID]/list` é usada para obter todas as intormações de objetos postados de um usuário.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e uma lista de postagens é retornada. Caso não tenha postagens, o com \"data\" apenas não terá informação.\n\n## Exemplo de Resposta\n\n``` json\n{\n    \"statusCode\": 200,\n    \"message\": \"Arquivos recuperados com sucesso\",\n    \"data\": [\n        {\n            \"id\": \"b49...\",\n            \"name\": \"plantuml-diagram.png\",\n            \"description\": \"\",\n            \"url\": \"uploads/1723440093769-531030798.png\",\n            \"tags\": [],\n            \"userId\": \"83cf...\",\n            \"createdAt\": \"2024-08-12T05:21:34.747Z\",\n            \"updatedAt\": \"2024-08-12T05:21:34.747Z\"\n        },\n        {\n            \"id\": \"090...\",\n            \"name\": \"arquitetura_base.png\",\n            \"description\": \"\",\n            \"url\": \"uploads/1723440127383-584817477.png\",\n            \"tags\": [],\n            \"userId\": \"83cf...\",\n            \"createdAt\": \"2024-08-12T05:22:08.131Z\",\n            \"updatedAt\": \"2024-08-12T05:22:08.131Z\"\n        }\n    ]\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.data.id).to.be.a('string');\r",
+									"    pm.expect(responseData.data.name).to.be.a('string');\r",
+									"    pm.expect(responseData.data.description).to.be.a('string');\r",
+									"    pm.expect(responseData.data.url).to.be.a('string');\r",
+									"    pm.expect(responseData.data.tags).to.be.an('array');\r",
+									"    pm.expect(responseData.data.userId).to.be.a('string');\r",
+									"    pm.expect(responseData.data.createdAt).to.be.a('string');\r",
+									"    pm.expect(responseData.data.updatedAt).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Id is a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData.data.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Id should be a non-empty string\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"CreatedAt and updatedAt are in valid date format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.data.createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$/, \"createdAt is not in valid date format\");\r",
+									"    pm.expect(responseData.data.updatedAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$/, \"updatedAt is not in valid date format\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_LOCAL}}/objeto/{{USER_ID}}/{{POST_ID}}/detalhes",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"objeto",
+								"{{USER_ID}}",
+								"{{POST_ID}}",
+								"detalhes"
+							]
+						},
+						"description": "A requisição `GET /objeto/[userID]/[objetoID]` é usada para obter a informação de um objeto postado.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e retornar as informações do Post.\n\n## Exemplo de Resposta\n\n``` json\n{\n    \"message\": \"Detalhes do objeto\",\n    \"data\": {\n        \"id\": \"601...\",\n        \"name\": \"plantuml-diagram.png\",\n        \"description\": \"\",\n        \"url\": \"uploads/1723439295537-708660715.png\",\n        \"tags\": [],\n        \"userId\": \"83cfe...\",\n        \"createdAt\": \"2024-08-12T05:08:16.451Z\",\n        \"updatedAt\": \"2024-08-12T05:08:16.451Z\"\n    }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "GetFile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is within the acceptable range for small files\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(3000);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response content type is image/png\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"image/png\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response body is not empty\", function () {\r",
+									"    pm.expect(pm.response).to.not.be.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_LOCAL}}/objeto/{{OBJETO_ID}}/upload",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"objeto",
+								"{{OBJETO_ID}}",
+								"upload"
+							]
+						},
+						"description": "A requisição `GET /objeto/[objetoID]` é usada para fazer o download da imagem (no front) para poder ser exibido ou utilizado de outras formas.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e um arquivo para o frontend em FormData.\n\n## Exemplo de Resposta\n\n<img src=\"https://content.pstmn.io/762cdd79-3538-428b-9ddf-aae23187b87b/aW1hZ2UucG5n\" alt=\"Visualização%20da%20resposta%20para%20uma%20requisição%20GetFile\" width=\"895\" height=\"406\">"
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 5000ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response should have the required fields\", function () {\r",
+									"    const responseData = pm.response.json().data;\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+									"\r",
+									"    responseData.forEach(function(item) {\r",
+									"        pm.expect(item).to.have.property('id').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('name').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('description').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('url').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('tags').that.is.an('array');\r",
+									"        pm.expect(item).to.have.property('userId').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('createdAt').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('updatedAt').that.is.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"ID is a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.data).to.be.an('array');\r",
+									"    responseData.data.forEach(function(obj) {\r",
+									"        pm.expect(obj.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"ID should not be empty\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"CreatedAt and UpdatedAt are in valid date-time format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.data).to.be.an('array');\r",
+									"    responseData.data.forEach(function(obj) {\r",
+									"        pm.expect(obj.createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$/, \"createdAt should be in valid date-time format\");\r",
+									"        pm.expect(obj.updatedAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$/, \"updatedAt should be in valid date-time format\");\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_LOCAL}}/objeto/{{USER_ID}}/search?keyword=uml",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"objeto",
+								"{{USER_ID}}",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "uml"
+								}
+							]
+						},
+						"description": "A requisição `GET /objeto/[usuarioID]/search` é usada buscar por uma lista de objetos postados que tenham, contidas na tag, nome ou descrição, o texto pesquisado.\n\nO resposta deve gerar o código `200` informando que a solicitação foi atendida e é retornado uma lista deobjetos para o frontend.\n\n## Exemplo de Resposta\n\n``` json\n{\n    \"message\": \"Resultados da pesquisa\",\n    \"data\": [\n        {\n            \"id\": \"b49...\",\n            \"name\": \"plantuml-diagram.png\",\n            \"description\": \"\",\n            \"url\": \"uploads/1723440093769-531030798.png\",\n            \"tags\": [],\n            \"userId\": \"83....d981b8\",\n            \"createdAt\": \"2024-08-12T05:21:34.747Z\",\n            \"updatedAt\": \"2024-08-12T05:21:34.747Z\"\n        }\n    ]\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('data');\r",
+									"    pm.expect(responseData.data).to.have.all.keys('id', 'name', 'description', 'url', 'tags', 'userId', 'createdAt', 'updatedAt');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tags is an array\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.data.tags).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"teste@\",\r\n    \"tags\": [\"abacate\", \"melao\", \"teste description\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_LOCAL}}/objeto/{{USER_ID}}/{{OBJETO_ID}}",
+							"host": [
+								"{{API_LOCAL}}"
+							],
+							"path": [
+								"objeto",
+								"{{USER_ID}}",
+								"{{OBJETO_ID}}"
+							]
+						},
+						"description": "A requisição `PATCH /objeto/[userID]/[objetoID]` é usada para atualizar alguma das informações do Objeto.\n\nOs dados que podem ser atualizados são:\n\n- tags: string \\[\\];\n    \n- description: string;\n    \n- name: string;\n    \n\n## Exemplo de Resposta\n\n``` json\n{\n    \"message\": \"Objeto atualizado com sucesso\",\n    \"data\": {\n        \"id\": \"b4...\",\n        \"name\": \"plantuml-diagram.png\",\n        \"description\": \"\",\n        \"url\": \"uploads/1723440093769-531030798.png\",\n        \"tags\": [\n            \"spoof\",\n            \"uml\",\n            \"aplication\"\n        ],\n        \"userId\": \"83...\",\n        \"createdAt\": \"2024-08-12T05:21:34.747Z\",\n        \"updatedAt\": \"2024-08-12T06:38:26.136Z\"\n    }\n}\n\n ```"
+					},
+					"response": []
+				}
+			],
+			"description": "Contém um conjunto de requisições relacionados a postar um Objeto multimidia. São elas:\n\n1. **Save**: Salvar os dados de um post, que inclui, obrigatóriamente um objeto multimidia. Para salvar os dados do Post, é necessário fazer o upload do arquivo no backend (usando a requisição **File**).\n    \n2. **Delete**: Deletar os dados de um post, tanto informações textuais como o objeto multimidia.\n    \n3. **Detail**: Coletar as informações de um Post em especifico. Somente o dono pode ver seu próprio Post.\n    \n4. **List**: Coletar uma lista de posts e suas informações.\n    \n5. **GetFile:** Faz o upload (lado do frontend) de um objeto multimidia.\n    \n6. **Search:** Busca por uma lista de post's que podem conter, em sua tag, nome de arquivo ou descrição, uma frase-chave, passada pela URL.\n    \n7. **Update** Atualizar as informações de um Post.\n    \n\nÉ importante citar que, para realizar qualquer ação, é necessário que o usuário esteja logado com seu Token válido.\n\n> Considere **Post** como uma postagem de um objeto multimidia (foto, áudio ou vídeo) contendo alguns elementos textuais como descrição, lista de tags e gênero a depender do tipo de Objeto multimidia postado. \n  \n\nTipos de arquivos permitidos:\n\n- **video:** mp4, mpg, avi, wmv, mov, webm/.\n    \n- **imagem:** jpeg, jpg, png, svg, gif.\n    \n- **áudio:** mp3, wav, pcm, flac.\n    \n\nLimitações:\n\n- Só pode postar/deletar um arquivo multimidia por vez.",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{USER_TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1",
+			"disabled": true
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/",
+			"disabled": true
+		},
+		{
+			"key": "API_NUVEM",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "API_LOCAL",
+			"value": ""
+		},
+		{
+			"key": "USER_ID",
+			"value": "<usuarioID>",
+			"type": "string"
+		},
+		{
+			"key": "USER_TOKEN",
+			"value": "<Access_token>",
+			"type": "string"
+		},
+		{
+			"key": "OBJETO_ID",
+			"value": "<objetoID>",
+			"type": "string"
+		}
+	]
+}
