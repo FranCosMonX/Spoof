@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import * as React from 'react';
+import { useState } from "react";
 import { Box, Button, Container, CssBaseline, Grid, TextField, Typography } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import InputMask from 'react-input-mask';
@@ -10,14 +11,12 @@ const defaultTheme = createTheme();
 
 export default function Edit(){
   const url = process.env.NEXT_PUBLIC_API_URL;
-  const userId = sessionStorage.getItem('user');
-  const token = sessionStorage.getItem('bearerToken');
   const router = useRouter();
 
   const [formData, setFormData] = useState({
     usuario: '',
     telefone: '',
-  });  
+  });
 
   const [sensitiveData, setSensitiveData] = useState({
     email: '',
@@ -44,7 +43,9 @@ export default function Edit(){
     }));
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
+    const userId = sessionStorage.getItem('user');
+    const token = sessionStorage.getItem('bearerToken');
     const getUserInfo = async () => {
       try {
         const response = await axios.get(url + '/users/' + userId, {
@@ -64,10 +65,12 @@ export default function Edit(){
     };
   
     getUserInfo();
-  }, [url, userId, token]);  
+  }, [url]);  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const userId = sessionStorage.getItem('user');
+    const token = sessionStorage.getItem('bearerToken');
 
     if (formData.usuario === '' || formData.telefone === '') {
       enqueueSnackbar('Nome de usuário e telefone são obrigatórios', { variant: 'error' });
