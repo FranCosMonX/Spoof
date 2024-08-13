@@ -25,10 +25,10 @@ export declare class UsersController {
     }, dto: BasicInformationDTO): Promise<{
         user: {
             usuario: string;
-            id: string;
             nome: string;
             email: string;
             telefone: string;
+            id: string;
             descricao: string;
             createdAt: Date;
             updatedAt: Date;
@@ -40,10 +40,10 @@ export declare class UsersController {
     }, dto: SensitiveInformationDTO): Promise<{
         user: {
             usuario: string;
-            id: string;
             nome: string;
             email: string;
             telefone: string;
+            id: string;
             descricao: string;
             createdAt: Date;
             updatedAt: Date;
@@ -52,8 +52,8 @@ export declare class UsersController {
     }>;
     getUsers(): Promise<{
         usuario: string;
-        id: string;
         email: string;
+        id: string;
     }[]>;
     uploadProfilePicture(file: Express.Multer.File, userId: string): Promise<{
         statusCode: HttpStatus;

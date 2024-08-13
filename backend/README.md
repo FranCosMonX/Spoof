@@ -9,7 +9,7 @@ O backend foi desenvolvido por meio de um projeto **React com nestJS + Prisma** 
 Uma representação da implementação da API pode ser vista na imagem logo a seguir, que descreve como ocorre a comunicação entre os componentes implementados e os verbos HTTPs usados (resumo).
 
 <div style="display: flex; justify-content: center;">
-    <img src="../src/img/plantuml-diagram (2).png" alt="Imagem descrevendo como esta ocorrendo a comunicação entre os componentes do backend">
+    <img src="../src/img/InteracaoComponentsBackend.png" alt="Imagem descrevendo como esta ocorrendo a comunicação entre os componentes do backend">
 </div>
 
 Como pode ser visto, o usuário precisa criar uma conta para poder ter acesso a funcionalidade de Login, necessária para conseguir o **access_token** para acessar a aplicação. É importante destacar que o token expira apó´s 30 minutos.
@@ -49,6 +49,18 @@ O Prisma é um ORM (Object-Relational Mapping) moderno e eficiente para Node.js 
 - **Migrations**: Facilita a criação e aplicação de migrações de banco de dados.
 - **Query Builder**: Oferece uma API intuitiva para construir consultas SQL.
 
+## Recursos usados
+
+- **Node.js 20.x**: Utilizado como ambiente de execução JavaScript, com gerenciamento de pacotes através do **PNPM**.
+- **NestJS 10.x**: Framework robusto para construção de aplicações Node.js escaláveis e eficientes, utilizado em conjunto com Prisma para mapeamento objeto-relacional (ORM), facilitando a interação com o banco de dados.
+- **Axios**: Biblioteca poderosa para fazer requisições HTTP, essencial para a coleta e manipulação de dados de APIs externas.
+- **Passport**: Middleware de autenticação flexível para Node.js, utilizado para gerenciar a autenticação dos usuários de forma segura e eficiente.
+- **bcrypt**: Biblioteca confiável para criptografia, utilizada para garantir a segurança das senhas dos usuários através de hashing.
+- **JWT (JSON Web Token)**: Utilizado para geração de tokens de autenticação, proporcionando uma camada adicional de segurança nas comunicações entre cliente e servidor.
+- **Multer**: Middleware eficiente para manipulação de arquivos multipart/form-data, utilizado para captura e tratamento de arquivos multimídia, como imagens e vídeos.
+- **AWS SDK**: Conjunto de ferramentas para interagir com os serviços da AWS, utilizado para integrar funcionalidades como armazenamento no S3, envio de emails com SES, entre outros. Versão utilizada: **2.1672.0**.
+
+
 ## Preparando o ambiente de execução
 
 instalando as dependências do projeto
@@ -59,14 +71,14 @@ pnpm i
 
 É de extrema importância que seja criado um arquivo `.env` na raiz do projeto e que seja copiado o código do arquivo `.env-example` para que o próximo passo possa vir a ser executado com êxito.
 
-Para concluir a configuração do projeto backend, use os comandos a seguir
+Para concluir a configuração do projeto backend é necessário criar e aplicar as migrações no banco de dados, além de gerar o Prisma Client - biblioteca usada para interagir com o Banco de Dados no código.
 
 ```bash
 # Aplica as migrações pendentes ao banco de dados
-npx prisma migrate
+pnpm dlx prisma migrate
 
 # Gera o cliente Prisma a partir do esquema definido
-npx prisma generate
+pnpm dlx prisma generate
 ```
 
 ## Executando a aplicação
@@ -82,16 +94,6 @@ pnpm run start:dev
 pnpm run start:prod
 ```
 
-## Test
+## Testes
 
-```bash
-# unit tests
-pnpm run test
-
-# e2e tests
-pnpm run test:e2e
-
-# test coverage
-pnpm run test:cov
-```
-
+Os testes foram feitos no Postman. A collection pode ser encontrada no arquivo "Spoof.postman_collection" encontrada em [../src/](../src/).

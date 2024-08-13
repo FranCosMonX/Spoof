@@ -26,10 +26,10 @@ export declare class UsersService {
     update(id: string, data: BasicInformationDTO | SensitiveInformationDTO): Promise<{
         user: {
             usuario: string;
-            id: string;
             nome: string;
             email: string;
             telefone: string;
+            id: string;
             descricao: string;
             createdAt: Date;
             updatedAt: Date;
@@ -38,8 +38,8 @@ export declare class UsersService {
     }>;
     getUsers(): Promise<{
         usuario: string;
-        id: string;
         email: string;
+        id: string;
     }[]>;
     updateProfilePicture(userId: string, file: Express.Multer.File): Promise<{
         message: string;
