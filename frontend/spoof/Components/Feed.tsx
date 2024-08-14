@@ -9,9 +9,16 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 
 type Item = {
+    userId: string,
     id: string,
     name: string,
     description: string,
+};
+
+type MidiaItem = {
+    description: string,
+    tags: Array<string>,
+    updatedAt: string
 };
 
 type Props = {
@@ -26,7 +33,11 @@ const Feed: React.FC<Props> = ({ list }) => {
     const { enqueueSnackbar } = useSnackbar();
     const router = useRouter();
 
-    const [mediaData, setMediaData] = React.useState<Object>({});
+    const [mediaData, setMediaData] = React.useState<MidiaItem>({
+        description: '',
+        tags: [''],
+        updatedAt: ''
+    });
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
