@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
 import { Box, Button, Chip, Container, createTheme, CssBaseline, Grid, TextField, ThemeProvider, Typography } from "@mui/material";
-import { enqueueSnackbar } from "notistack";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { enqueueSnackbar } from "notistack";
+import { useEffect, useState } from "react";
 
 const EditPost = () => {
     const [name, setName] = useState('');
@@ -14,7 +14,6 @@ const EditPost = () => {
     const router = useRouter();
     const { id: postId } = router.query;
     const url = process.env.NEXT_PUBLIC_API_URL;
-    let form = new FormData();
 
     useEffect(() => {
         if (postId) {
@@ -68,8 +67,10 @@ const EditPost = () => {
             return;
         }
 
-        form.set('description', description);
-        form.set('tags', tags.join());
+        const form = {
+            description: description,
+            tags: [tags.join()]
+        }
 
         try {
             await axios.patch(`${url}/objeto/${userId}/${postId}`, form, {

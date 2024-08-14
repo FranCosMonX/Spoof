@@ -52,18 +52,16 @@ let UsersService = class UsersService {
             const userData = data;
             const result = await this.prisma.usuario.update({
                 where: { id },
-                data: { telefone: userData.telefone, usuario: userData.usuario, updatedAt: new Date() }
+                data: {
+                    telefone: userData.telefone ?? user.telefone,
+                    usuario: userData.usuario ?? user.usuario,
+                    descricao: userData.descricao ?? user.descricao,
+                    updatedAt: new Date()
+                },
+                select: { id: true, nome: true, usuario: true, email: true, descricao: true, telefone: true, createdAt: true, updatedAt: true }
             });
             return {
-                user: {
-                    id: result.id,
-                    nome: result.nome,
-                    usuario: result.usuario,
-                    email: result.email,
-                    telefone: result.telefone,
-                    createdAt: result.createdAt,
-                    updatedAt: result.updatedAt
-                },
+                user: result,
                 message: "Informações básicas alteradas com sucesso!"
             };
         }
@@ -83,18 +81,11 @@ let UsersService = class UsersService {
                 });
             }
             const result = await this.prisma.usuario.findFirst({
-                where: { id }
+                where: { id },
+                select: { id: true, nome: true, usuario: true, email: true, descricao: true, telefone: true, createdAt: true, updatedAt: true }
             });
             return {
-                user: {
-                    id: result.id,
-                    nome: result.nome,
-                    usuario: result.usuario,
-                    email: result.email,
-                    telefone: result.telefone,
-                    createdAt: result.createdAt,
-                    updatedAt: result.updatedAt
-                },
+                user: result,
                 message: "Informações sensíveis alteradas com sucesso!"
             };
         }
@@ -104,7 +95,7 @@ let UsersService = class UsersService {
     }
     async getUsers() {
         return await this.prisma.usuario.findMany({
-            select: { id: true, email: true, usuario: true, senha: true },
+            select: { id: true, email: true, usuario: true },
         });
     }
     async updateProfilePicture(userId, file) {

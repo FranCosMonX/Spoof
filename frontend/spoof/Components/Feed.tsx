@@ -9,9 +9,16 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 
 type Item = {
+    userId: string,
     id: string,
     name: string,
     description: string,
+};
+
+type MidiaItem = {
+    description: string,
+    tags: Array<string>,
+    updatedAt: string
 };
 
 type Props = {
@@ -26,6 +33,12 @@ const Feed: React.FC<Props> = ({ list }) => {
     const { enqueueSnackbar } = useSnackbar();
     const router = useRouter();
 
+    const [mediaData, setMediaData] = React.useState<MidiaItem>({
+        description: '',
+        tags: [''],
+        updatedAt: ''
+    });
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
@@ -33,7 +46,7 @@ const Feed: React.FC<Props> = ({ list }) => {
         setMediaType(null);
     };
 
-    const getMidia = async (id: String) => {
+    const getMidia = async (id: String, userId: String) => {
         const token = sessionStorage.getItem('bearerToken');
         try {
             const response = await axios.get(url + `/objeto/${id}/upload`, {
@@ -43,11 +56,18 @@ const Feed: React.FC<Props> = ({ list }) => {
                 responseType: 'blob'  // Recebendo a mídia como Blob
             });
 
+            const response1 = await axios.get(url + `/objeto/${userId}/${id}/detalhes`, {
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                }
+            });
+
             if ([200, 201].includes(response.status)) {
                 const mediaUrl = URL.createObjectURL(response.data);
                 const mediaType = response.data.type.split('/')[0]; // "image", "video" ou "audio"
                 setMediaUrl(mediaUrl);
                 setMediaType(mediaType);
+                setMediaData(response1.data.data);
                 handleOpen();
             } else if ([400, 401].includes(response.status)) {
                 enqueueSnackbar(`Erro: ${response.data.message}`, { variant: 'error' });
@@ -131,7 +151,7 @@ const Feed: React.FC<Props> = ({ list }) => {
                                                 <TableCell>{row.description}</TableCell>
                                                 <TableCell>
                                                     <Stack direction="row" spacing={2}>
-                                                        <IconButton onClick={() => getMidia(row.id)} color="primary" aria-label="Visualizar">
+                                                        <IconButton onClick={() => getMidia(row.id, row.userId)} color="primary" aria-label="Visualizar">
                                                             <SendIcon />
                                                         </IconButton>
                                                         <IconButton onClick={() => router.push(`/posts/new/${row.id}`)} aria-label="Editar">
@@ -197,7 +217,7 @@ const Feed: React.FC<Props> = ({ list }) => {
                         />
                     )}
                     {mediaType === 'video' && mediaUrl && (
-                        <video controls width="100%" height="100%">
+                        <video controls height="80%">
                             <source src={mediaUrl} type="video/mp4" />
                             Seu navegador não suporta a reprodução de vídeos.
                         </video>
@@ -208,6 +228,13 @@ const Feed: React.FC<Props> = ({ list }) => {
                             Seu navegador não suporta a reprodução de áudio.
                         </audio>
                     )}
+
+                    <Box marginTop={3}>
+                        <Typography>Nome: {mediaData.description}</Typography>
+                        <Typography>Tags: {mediaData.tags}</Typography>
+                        <Typography>Última modificação: {new Date(mediaData.updatedAt).toLocaleDateString("pt-br")} - {new Date(mediaData.updatedAt).toLocaleTimeString("pt-br")} 
+                        </Typography>
+                    </Box>
                 </Box>
             </Modal>
         </Container>

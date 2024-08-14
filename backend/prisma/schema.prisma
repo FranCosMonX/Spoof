@@ -9,15 +9,16 @@ datasource db {
 
 // Modelo Usuario
 model Usuario {
-  id        String    @id @unique @default(uuid())
-  nome      String
-  usuario   String    @unique
-  email     String    @unique
-  telefone  String    @unique
-  senha     String
-  profilePicture String?   
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id             String   @id @unique @default(uuid())
+  nome           String
+  usuario        String   @unique
+  email          String   @unique
+  telefone       String   @unique
+  senha          String
+  descricao      String?
+  profilePicture String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   objetos        Objeto[] // Relação com o modelo Objeto
 }
 

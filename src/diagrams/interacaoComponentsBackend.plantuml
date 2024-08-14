@@ -1,29 +1,32 @@
- 
 @startuml
 note "Um usuário só pode acessar a aplicação ao ter algum cadastro efetivado" as detalheUsuario
 note "As ações feitas na interface de Postagem são efetivadas sob as informações de Objeto" as detalhePOST
 
+
 class Usuario{
-    id: string auto increment
-    nome: string
-    telefone: string
-    email: string
-    usuario: string
-    senha: string
-    createdAt: Date
-    updatedAt: Date
+    id*: string auto increment
+    nome*: string
+    telefone*: string
+    email*: string
+    descricao: string | null
+    usuario*: string
+    senha*: string
+    profilePicture: string | null
+    createdAt*: Date
+    updatedAt*: Date
 }
 
 class Objeto{
-    id: string auto increment
-    nome: string
-    url: string
+    id*: string auto increment
+    nome*: string
+    url*: string
     tag: List<string>
     genero: string
-    descricao: string
-    createdAt: Date
-    updatedAt: Date
+    descricao: string | null
+    createdAt*: Date
+    updatedAt*: Date
 }
+
 
 interface Signin{
     -Acess_token: string
@@ -45,6 +48,8 @@ interface Perfil{
     -telefone: string
     -email: string
     -usuario: string
+    -descricao: string | null
+    -profilePicture: string | null
     -senha: string
     +setBasicInformation(usuarioID, BasicInformation): {Usuario, createdAt, updatedAt}
     +setSensitiveInformation(usuarioID, SensitiveInformation): {Usuario, createdAt, updatedAt}
