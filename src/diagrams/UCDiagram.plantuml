@@ -1,23 +1,35 @@
 @startuml
 
-left to right direction
-
 actor usuario
+actor usuario_IAM
+actor S3
+actor BD
+actor SISTEMA
 
-usuario --> (Cadastrar usuario)
-usuario --> (Log  in/Logout)
-usuario --> (Gerenciar Perfil)
-usuario --> (Cadastrar Post)
-usuario --> (Gerenciar Post)
-usuario --> (Processamento de Objetos)
-usuario --> (Buscar Post)
-(Buscar Post) --> (Filtro)
+SISTEMA -- BD
+SISTEMA -- usuario_IAM
+usuario_IAM -- S3
 
-(Cadastrar usuario) .> (Login/Logout)
-(Login/Logout) .> (Gerenciar Perfil)
-(Login/Logout) .> (Processamento de Objetos)
-(Login/Logout) .> (Cadastrar Post)
-(Login/Logout) .> (Gerenciar Post)
-(Cadastrar Post) .> (Processamento de Objetos)
+usuario -- (Cadastrar usuario)
+usuario -- (Login/Logout)
+usuario -- (Gerenciar Perfil)
+usuario -- (Cadastrar Post)
+usuario -- (Gerenciar Post)
+usuario -- (Buscar Post)
+
+(Cadastrar usuario) -- BD
+(Cadastrar usuario) .. (Login/Logout)
+(Login/Logout) -- SISTEMA
+(Login/Logout) .. (Gerenciar Perfil)
+(Login/Logout) .. (Cadastrar Post)
+(Login/Logout) .. (Gerenciar Post)
+(Cadastrar Post) -- BD
+(Cadastrar Post) -- usuario_IAM
+(Gerenciar Post) -- BD
+(Gerenciar Post) -- usuario_IAM
+(Cadastrar Post) .. (Gerenciar Post)
+(Gerenciar Perfil) -- BD
+(Gerenciar Perfil) -- usuario_IAM
+(Buscar Post) -- SISTEMA
 
 @enduml
